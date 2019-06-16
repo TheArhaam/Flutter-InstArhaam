@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'login.dart';
 import 'wallpaper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -32,29 +33,30 @@ class AddWallpaperState extends State<AddWallpaper> {
     wallpaperdb.once().then((ds) {
       Map emailds = ds.value;
       emailds.forEach((key, value) {
-        print('${key}');
         if (key ==
             details.userEmail.substring(0, details.userEmail.length - 4)) {
-          Map elementsds = value;
-          elementsds.forEach((key, value) {
-            Map detailsds = value;
-            detailsds.forEach((key, value) {
-              print('${value}');
-              if (key.toString() == 'imageurl') {
-                tempurl = value.toString();
-              } else if (key.toString() == 'txt') {
-                temptxt = value.toString();
-              }
+          Map imagesds = value;
+          imagesds.forEach((key, value) {
+            Map elementsds = value;
+            elementsds.forEach((key, value) {
+              Map detailsds = value;
+              detailsds.forEach((key, value) {
+                print('${value}');
+                if (key.toString() == 'imageurl') {
+                  tempurl = value.toString();
+                } else if (key.toString() == 'txt') {
+                  temptxt = value.toString();
+                }
+              });
+              wallpaperlist.add(new Wallpaper.ifImage(
+                  Image.network(
+                    tempurl,
+                  ),
+                  Text(temptxt)));
             });
-            wallpaperlist.add(new Wallpaper.ifImage(
-                Image.network(
-                  tempurl,
-                ),
-                Text(temptxt)));
           });
         }
       });
-
       setState(() {});
     });
   }
@@ -90,6 +92,12 @@ class AddWallpaperState extends State<AddWallpaper> {
         context: context,
         builder: (context) {
           return AlertDialog(
+            elevation: 10,
+            titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+                side: BorderSide(width: 5, color: Color(0xFF1b1b1b))),
+            backgroundColor: Color(0xFF484848),
             title: Text('Upload Image'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
@@ -99,14 +107,25 @@ class AddWallpaperState extends State<AddWallpaper> {
                     selectedImageFile = await ImagePicker.pickImage(
                         source: ImageSource.gallery);
                   },
-                  child: Text('Select Image'),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(Icons.filter),
+                      Text(' Select Image')
+                    ],
+                  ),
                 ),
-                Text('Enter Caption: '),
+                Text(
+                  'Enter image title: ',
+                  style: TextStyle(color: Colors.white, height: 1.5),
+                ),
                 TextField(
+                  style: TextStyle(color: Colors.white),
                   enabled: true,
-                  maxLength: 40,
+                  maxLength: 15,
                   obscureText: false,
-                  maxLines: 2,
+                  maxLines: 1,
                   expands: false,
                   maxLengthEnforced: true,
                   onChanged: (String title) {
@@ -122,7 +141,14 @@ class AddWallpaperState extends State<AddWallpaper> {
                     setState(() {});
                     Navigator.pop(context);
                   },
-                  child: Text('Upload'),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(Icons.cloud_upload),
+                      Text(' Upload')
+                    ],
+                  ),
                 )
               ],
             ),
@@ -144,6 +170,7 @@ class AddWallpaperState extends State<AddWallpaper> {
         new FirebaseWallpaper(downloadURL, wallpaper.txt.data);
     wallpaperdb
         .child(details.userEmail.substring(0, details.userEmail.length - 4))
+        .child('Images')
         .child(fwallpaper.txt)
         .set(fwallpaper.getJSON());
   }

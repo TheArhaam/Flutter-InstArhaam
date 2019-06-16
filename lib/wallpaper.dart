@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Wallpaper {
   Image img;
@@ -32,6 +33,7 @@ class FirebaseWallpaper {
 
 class WallpaperListWidget extends StatelessWidget {
   final List<Wallpaper> wallpaperlist;
+
   WallpaperListWidget(this.wallpaperlist);
   @override
   Widget build(BuildContext context) {
@@ -46,19 +48,27 @@ class WallpaperListWidget extends StatelessWidget {
                         children: <Widget>[
                           element.img,
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Text(
-                                element.txt.data,
-                                style: TextStyle(color: Colors.white),
+                              Expanded(
+                                  child: Padding(
+                                      padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                                      child: Text(element.txt.data,
+                                          style:
+                                              TextStyle(color: Colors.white)))),
+                              Row(
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(Icons.favorite_border),
+                                    onPressed: () {},
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.menu),
+                                    onPressed: () {},
+                                  ),
+                                ],
                               ),
-                              IconButton(
-                                icon: Icon(Icons.favorite_border),
-                                onPressed: () {},
-                              )
                             ],
-                          )
+                          ),
                         ],
                       ),
                       // margin: EdgeInsets.all(10.0),

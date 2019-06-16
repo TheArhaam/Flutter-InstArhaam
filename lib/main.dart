@@ -19,18 +19,18 @@ class MyApp extends StatelessWidget {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     return MaterialApp(
       theme: ThemeData(
-          primaryColor: Color(0xFF1b1b1b),
-          cardColor: Color(0xFF212121),
-          canvasColor: Color(0xFF484848),
-          buttonColor: Colors.white,
-          cardTheme: CardTheme(
-            margin: EdgeInsets.all(10.0),
-            elevation: 15.0,
-          ),
-          buttonTheme: ButtonThemeData(
-              buttonColor: Color(0xFF1b1b1b),
-              textTheme: ButtonTextTheme.primary),
-          iconTheme: IconThemeData(color: Colors.white)),
+        primaryColor: Color(0xFF1b1b1b),
+        cardColor: Color(0xFF212121),
+        canvasColor: Color(0xFF484848),
+        buttonColor: Colors.white,
+        cardTheme: CardTheme(
+          margin: EdgeInsets.all(10.0),
+          elevation: 15.0,
+        ),
+        buttonTheme: ButtonThemeData(
+            buttonColor: Color(0xFF1b1b1b), textTheme: ButtonTextTheme.primary),
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
       home: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
