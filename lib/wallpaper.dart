@@ -1,51 +1,71 @@
 import 'dart:io';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'login.dart';
 
 class Wallpaper {
   Image img;
   Text txt;
+  String owner;
+  bool liked;
 
-  Wallpaper(File img, Text txt) {
+  Wallpaper(File img, Text txt, String owner) {
     this.img = Image.file(img);
     this.txt = txt;
+    this.owner = owner;
+    liked = false;
   }
 
-  Wallpaper.ifImage(Image img, Text txt) {
+  Wallpaper.ifImage(Image img, Text txt, String owner, bool liked) {
     this.img = img;
     this.txt = txt;
+    this.owner = owner;
+    this.liked = liked;
   }
 }
 
 class FirebaseWallpaper {
   String imageurl;
   String txt;
+  String owner;
 
-  FirebaseWallpaper(String imageurl, String txt) {
+  FirebaseWallpaper(String imageurl, String txt, String owner) {
     this.imageurl = imageurl;
     this.txt = txt;
+    this.owner = owner;
   }
   getJSON() {
-    return {'imageurl': '${imageurl}', 'txt': '${txt}'};
+    return {
+      'imageurl': '${imageurl}',
+      'txt': '${txt}',
+      'owner': '${owner}',
+      'Liked by': {'default': 'true'}
+    };
   }
 }
 
 class WallpaperListWidget extends StatefulWidget {
   final List<Wallpaper> wallpaperlist;
-  const WallpaperListWidget(this.wallpaperlist);
+  final UserDetails details;
+  const WallpaperListWidget(this.wallpaperlist, this.details);
   @override
   State<StatefulWidget> createState() {
-    return WallpaperListState(wallpaperlist);
+    return WallpaperListState(wallpaperlist, details);
   }
 }
 
 class WallpaperListState extends State<WallpaperListWidget> {
   final List<Wallpaper> wallpaperlist;
-  Icon favicon;
+  final UserDetails details;
+  Icon sicon;
+  Icon favicon = Icon(Icons.favorite);
+  Icon favbicon = Icon(Icons.favorite_border);
+  var wallpaperdb = FirebaseDatabase.instance.reference().child('Wallpapers');
 
-  WallpaperListState(this.wallpaperlist) {
-    favicon = Icon(Icons.favorite_border);
+  WallpaperListState(this.wallpaperlist, this.details) {
+    sicon = favbicon;
   }
 
   @override
@@ -71,16 +91,37 @@ class WallpaperListState extends State<WallpaperListWidget> {
                               Row(
                                 children: <Widget>[
                                   IconButton(
-                                    icon: favicon,
+                                    splashColor: Colors.white,
+                                    icon: checkFav(element),
                                     onPressed: () {
                                       setState(() {
-                                        favicon = Icon(Icons.favorite);
-
-                                      //ADD A NEW PROPERTY TO THE DATABASE FOR EACH IMAGE
-                                      //A CHILD WITH KEY=>EMAIL VALUE=>TRUE/FALSE
-                                      //THIS WILL TELL US IF THE KEY(EMAIL) HAS LIKED THE IMAGE OR NOT
-                                      //ACCORDINGLY WE CAN DISPLAY THE ICON AS ONLY BORDER OR FILLED
-
+                                        if (element.liked == false) {
+                                          element.liked = true;
+                                          wallpaperdb
+                                              .child(element.owner)
+                                              .child('Images')
+                                              .child(element.txt.data)
+                                              .child('Liked by')
+                                              .child(details.userEmail
+                                                  .substring(
+                                                      0,
+                                                      details.userEmail.length -
+                                                          4))
+                                              .set(true);
+                                        } else if (element.liked == true) {
+                                          element.liked = false;
+                                          wallpaperdb
+                                              .child(element.owner)
+                                              .child('Images')
+                                              .child(element.txt.data)
+                                              .child('Liked by')
+                                              .child(details.userEmail
+                                                  .substring(
+                                                      0,
+                                                      details.userEmail.length -
+                                                          4))
+                                              .remove();
+                                        }
                                       });
                                     },
                                   ),
@@ -109,10 +150,17 @@ class WallpaperListState extends State<WallpaperListWidget> {
                           ),
                         ],
                       ),
-                      // margin: EdgeInsets.all(10.0),
                     ),
               )
               .toList()),
     );
+  }
+
+  Widget checkFav(var element) {
+    if (element.liked == true) {
+      return favicon;
+    } else {
+      return favbicon;
+    }
   }
 }
