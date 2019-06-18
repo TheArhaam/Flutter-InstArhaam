@@ -13,7 +13,6 @@ void main() {
 class MyApp extends StatelessWidget {
   final UserDetails details;
   MyApp(this.details);
-
   @override
   Widget build(BuildContext context) {
     final GoogleSignIn googleSignIn = GoogleSignIn();

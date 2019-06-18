@@ -18,7 +18,8 @@ void main() {
     String providerDetails;
     String userName;
     String userEmail;
-    await tester.pumpWidget(MyApp(UserDetails(providerDetails, userName, userEmail, providerData)));
+    String photoUrl;
+    await tester.pumpWidget(MyApp(UserDetails(providerDetails, userName, userEmail, providerData, photoUrl)));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

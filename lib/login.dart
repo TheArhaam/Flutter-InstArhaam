@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -51,9 +52,18 @@ class LoginHome extends StatelessWidget {
     ProviderDetails providerInfo = ProviderDetails(userDetails.providerId);
     List<ProviderDetails> providerData = List<ProviderDetails>();
     providerData.add(providerInfo);
-    UserDetails details = UserDetails(userDetails.providerId,
-        userDetails.displayName, userDetails.email, providerData);
+    UserDetails details = UserDetails(
+        userDetails.providerId,
+        userDetails.displayName,
+        userDetails.email,
+        providerData,
+        userDetails.photoUrl);
 
+    var wallpaperdb = FirebaseDatabase.instance.reference().child('Wallpapers');
+    wallpaperdb
+        .child(details.userEmail.substring(0, details.userEmail.length - 4))
+        .child('display picture')
+        .set(details.photoUrl);
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => MyApp(details)));
     return userDetails;
@@ -105,9 +115,16 @@ class UserDetails {
   final String providerDetails;
   final String userName;
   final String userEmail;
+  final String photoUrl;
   final List<ProviderDetails> providerData;
-  UserDetails(
-      this.providerDetails, this.userName, this.userEmail, this.providerData);
+  UserDetails(this.providerDetails, this.userName, this.userEmail,
+      this.providerData, this.photoUrl);
+}
+
+class UserDisplayDetails {
+  final String dpUrl;
+  final String userEmail;
+  UserDisplayDetails(this.dpUrl, this.userEmail);
 }
 
 class ProviderDetails {

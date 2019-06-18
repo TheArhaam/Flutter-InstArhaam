@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'login.dart';
 import 'wallpaper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,14 +20,36 @@ class AddWallpaper extends StatefulWidget {
 }
 
 class AddWallpaperState extends State<AddWallpaper> {
+  List<UserDisplayDetails> userlist = List();
   final UserDetails details;
-
   List<Wallpaper> wallpaperlist = List();
-  String tempurl = '', temptxt = '', tempowner = '';
+  String tempurl = '',
+      temptxt = '',
+      tempowner = '',
+      tempdpurl = '',
+      tempemail = '';
   bool templiked = false;
   var wallpaperdb = FirebaseDatabase.instance.reference().child('Wallpapers');
   AddWallpaperState(this.details) {
     initWallpapers();
+    initUsers();
+  }
+
+  initUsers() {
+    wallpaperdb.once().then((ds) {
+      Map emailsds = ds.value;
+      emailsds.forEach((key, value) async {
+        tempemail = key.toString();
+        Map dpds = value;
+        dpds.forEach((key, value) {
+          if (key.toString() == 'display picture') {
+            tempdpurl = value;
+          }
+        });
+        userlist.add(UserDisplayDetails(tempdpurl, tempemail));
+        print('${userlist}');
+      });
+    });
   }
 
   initWallpapers() {
@@ -37,35 +60,37 @@ class AddWallpaperState extends State<AddWallpaper> {
             details.userEmail.substring(0, details.userEmail.length - 4)) {
           Map imagesds = value;
           imagesds.forEach((key, value) {
-            Map elementsds = value;
-            elementsds.forEach((key, value) {
-              Map detailsds = value;
-              detailsds.forEach((key, value) {
-                if (key.toString() == 'imageurl') {
-                  tempurl = value.toString();
-                } else if (key.toString() == 'txt') {
-                  temptxt = value.toString();
-                } else if (key.toString() == 'owner') {
-                  tempowner = value.toString();
-                } else if (key.toString() == 'Liked by') {
-                  Map likedds = value;
-                  if (likedds.containsKey(details.userEmail
-                      .substring(0, details.userEmail.length - 4))) {
-                    templiked = true;
-                  } else {
-                    templiked = false;
+            if (key.toString() == 'Images') {
+              Map elementsds = value;
+              elementsds.forEach((key, value) {
+                Map detailsds = value;
+                detailsds.forEach((key, value) {
+                  if (key.toString() == 'imageurl') {
+                    tempurl = value.toString();
+                  } else if (key.toString() == 'txt') {
+                    temptxt = value.toString();
+                  } else if (key.toString() == 'owner') {
+                    tempowner = value.toString();
+                  } else if (key.toString() == 'Liked by') {
+                    Map likedds = value;
+                    if (likedds.containsKey(details.userEmail
+                        .substring(0, details.userEmail.length - 4))) {
+                      templiked = true;
+                    } else {
+                      templiked = false;
+                    }
                   }
-                }
+                });
+                wallpaperlist.add(new Wallpaper.ifImage(
+                    Image.network(
+                      tempurl,
+                    ),
+                    Text(temptxt),
+                    tempowner,
+                    templiked));
+                templiked = false;
               });
-              wallpaperlist.add(new Wallpaper.ifImage(
-                  Image.network(
-                    tempurl,
-                  ),
-                  Text(temptxt),
-                  tempowner,
-                  templiked));
-              templiked = false;
-            });
+            }
           });
         }
       });
@@ -77,23 +102,84 @@ class AddWallpaperState extends State<AddWallpaper> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Container(
-          width: 170,
-          child: RaisedButton(
-              onPressed: () {
-                dialogForInput(context);
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            RaisedButton(
+              onPressed: () async {
+                await dialogForUsers(context);
                 setState(() {});
+                //USERS ARE INITIALIZED ONLY ONCE WHEN CONSTRUCTOR IS CALLED
+                //LOOK INTO IT
               },
               child: Row(
-                children: <Widget>[
-                  Icon(Icons.add_a_photo),
-                  Text('  Upload Image'),
-                ],
-              )),
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[Icon(Icons.contacts), Text('  View Users')],
+              ),
+            ),
+            RaisedButton(
+                onPressed: () {
+                  dialogForInput(context);
+                  setState(() {});
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Icon(Icons.add_a_photo),
+                    Text('  Upload Image'),
+                  ],
+                )),
+          ],
         ),
         WallpaperListWidget(wallpaperlist, details),
       ],
     );
+  }
+
+  dialogForUsers(BuildContext context) {
+    final double hsize = MediaQuery.of(context).size.height - 280.0;
+    final double wsize = MediaQuery.of(context).size.width - 150.0;
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              elevation: 10,
+              titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  side: BorderSide(width: 5, color: Color(0xFF1b1b1b))),
+              backgroundColor: Color(0xFF484848),
+              title: Text('USERS'),
+              content: Container(
+                width: wsize,
+                height: hsize,
+                child: ListView(
+                    children: userlist
+                        .map((element) => Card(
+                                child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                Image.network(
+                                  element.dpUrl,
+                                  height: 50,
+                                ),
+                                Text(
+                                  element.userEmail,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    FontAwesomeIcons.plus,
+                                    color: Colors.white,size: 20,
+                                  ),
+                                )
+                              ],
+                            )))
+                        .toList()),
+              ));
+        });
   }
 
   dialogForInput(BuildContext context) {
