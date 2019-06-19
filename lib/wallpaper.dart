@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hello_flutter/wallpapermanagement.dart';
 
 import 'login.dart';
@@ -54,7 +55,7 @@ class WallpaperListWidget extends StatefulWidget {
   const WallpaperListWidget(this.wallpaperlist, this.details);
   @override
   State<StatefulWidget> createState() {
-    return WallpaperListState(wallpaperlist,details);
+    return WallpaperListState(wallpaperlist, details);
   }
 }
 
@@ -69,7 +70,6 @@ class WallpaperListState extends State<WallpaperListWidget> {
   WallpaperListState(this.wallpaperlist, this.details) {
     sicon = favbicon;
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +82,22 @@ class WallpaperListState extends State<WallpaperListWidget> {
                 (element) => Card(
                       child: Column(
                         children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(details.photoUrl,
+                                      height: 30),
+                                      //THIS DISPLAYS THE LOGGED IN USERS INFO
+                                      //CHANGE IT AND SAVE THE OWNER INFO ON FIREBASE AS WELL
+                                ),
+                              ),
+                              Text(details.userName,
+                                  style: TextStyle(color: Colors.white))
+                            ],
+                          ),
                           element.img,
                           Row(
                             children: <Widget>[
@@ -146,8 +162,8 @@ class WallpaperListState extends State<WallpaperListWidget> {
                                               .child(element.owner)
                                               .child(element.txt.data)
                                               .delete();
-                                              
-                                              wallpaperlist.remove(element);
+
+                                          wallpaperlist.remove(element);
                                           setState(() {});
                                         }
                                       },
