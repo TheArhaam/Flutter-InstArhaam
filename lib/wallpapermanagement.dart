@@ -35,23 +35,6 @@ class AddWallpaperState extends State<AddWallpaper> {
     initUsers();
   }
 
-  initUsers() {
-    wallpaperdb.once().then((ds) {
-      Map emailsds = ds.value;
-      emailsds.forEach((key, value) async {
-        tempemail = key.toString();
-        Map dpds = value;
-        dpds.forEach((key, value) {
-          if (key.toString() == 'display picture') {
-            tempdpurl = value;
-          }
-        });
-        userlist.add(UserDisplayDetails(tempdpurl, tempemail));
-        print('${userlist}');
-      });
-    });
-  }
-
   initWallpapers() {
     wallpaperdb.once().then((ds) {
       Map emailds = ds.value;
@@ -95,6 +78,22 @@ class AddWallpaperState extends State<AddWallpaper> {
         }
       });
       setState(() {});
+    });
+  }
+
+  initUsers() {
+    wallpaperdb.once().then((ds) {
+      Map emailsds = ds.value;
+      emailsds.forEach((key, value) async {
+        tempemail = key.toString();
+        Map dpds = value;
+        dpds.forEach((key, value) {
+          if (key.toString() == 'display picture') {
+            tempdpurl = value;
+          }
+        });
+        userlist.add(UserDisplayDetails(tempdpurl, tempemail));
+      });
     });
   }
 
@@ -172,7 +171,8 @@ class AddWallpaperState extends State<AddWallpaper> {
                                 IconButton(
                                   icon: Icon(
                                     FontAwesomeIcons.plus,
-                                    color: Colors.white,size: 20,
+                                    color: Colors.white,
+                                    size: 20,
                                   ),
                                 )
                               ],
@@ -261,7 +261,7 @@ class AddWallpaperState extends State<AddWallpaper> {
     final StorageReference str = FirebaseStorage.instance
         .ref()
         .child('Wallpapers')
-        .child(details.userEmail);
+        .child(details.userEmail.substring(0, details.userEmail.length - 4));
     StorageUploadTask uploadTask =
         str.child(wallpaper.txt.data).putFile(selectedImageFile);
     String downloadURL =

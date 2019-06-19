@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:hello_flutter/wallpapermanagement.dart';
 
 import 'login.dart';
 
@@ -52,12 +54,12 @@ class WallpaperListWidget extends StatefulWidget {
   const WallpaperListWidget(this.wallpaperlist, this.details);
   @override
   State<StatefulWidget> createState() {
-    return WallpaperListState(wallpaperlist, details);
+    return WallpaperListState(wallpaperlist,details);
   }
 }
 
 class WallpaperListState extends State<WallpaperListWidget> {
-  final List<Wallpaper> wallpaperlist;
+  List<Wallpaper> wallpaperlist;
   final UserDetails details;
   Icon sicon;
   Icon favicon = Icon(Icons.favorite);
@@ -67,6 +69,7 @@ class WallpaperListState extends State<WallpaperListWidget> {
   WallpaperListState(this.wallpaperlist, this.details) {
     sicon = favbicon;
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -129,10 +132,30 @@ class WallpaperListState extends State<WallpaperListWidget> {
                                     data: Theme.of(context)
                                         .copyWith(cardColor: Color(0xFF484848)),
                                     child: PopupMenuButton(
+                                      onSelected: (var choice) {
+                                        if (choice == 'Delete') {
+                                          wallpaperdb
+                                              .child(element.owner)
+                                              .child('Images')
+                                              .child(element.txt.data)
+                                              .remove();
+
+                                          FirebaseStorage.instance
+                                              .ref()
+                                              .child('Wallpapers')
+                                              .child(element.owner)
+                                              .child(element.txt.data)
+                                              .delete();
+                                              
+                                              wallpaperlist.remove(element);
+                                          setState(() {});
+                                        }
+                                      },
                                       icon: Icon(Icons.menu),
                                       itemBuilder: (BuildContext context) {
                                         return <PopupMenuItem>[
                                           PopupMenuItem(
+                                            value: 'Delete',
                                             child: Text(
                                               'Delete',
                                               style: TextStyle(
