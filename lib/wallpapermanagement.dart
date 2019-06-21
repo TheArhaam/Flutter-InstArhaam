@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'login.dart';
+import 'package:hello_flutter/UserInformation.dart';
 import 'wallpaper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -41,9 +41,6 @@ class AddWallpaperState extends State<AddWallpaper> {
   initWallpapers() {
     String
         currentUser; //Cut email of the user whose images are currently being added to the wallpaperlist
-    // String tempdpurl = '',
-    //     tempuemail = '',
-    //     tempname = ''; //To fetch the user details into
 
     wallpaperdb.once().then((ds) {
       Map emailds = ds.value; //DataSnapchat at the Cut email
@@ -90,6 +87,7 @@ class AddWallpaperState extends State<AddWallpaper> {
               templiked = false;
               //THE ABOVE IMPLEMENTATION IF FOR EVERY SINGLE IMAGE IN THE DATABASE OF ALL USERS
               //START THE IMPLEMENTATION OF FOLLOWERS AND FOLLOWING TO DISPLAY ONLY LOGGEDIN USERS IMAGES AND THE FOLLOWING USERS IMAGES
+              //WILL PROBABLY HAVE TO CREATE A CLASS TO STORE THE OWNER AND COUNT SO WE CAN DYNAMICALLY ACCESS THE COUNT FOR DESIRED USERS
             });
           }
         });

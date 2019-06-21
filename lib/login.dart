@@ -1,10 +1,14 @@
+//THIS FILE CONTAINS THE LOGIN PAGE AND THE IMPLEMENTATION FOR GOOGLE SIGN IN
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:hello_flutter/main.dart';
+import 'package:hello_flutter/UserInformation.dart';
+import 'package:hello_flutter/home.dart';
 
+//CREATES LoginPageState
 class LoginPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -12,10 +16,12 @@ class LoginPage extends StatefulWidget {
   }
 }
 
+//CONTAINS THE THEME OF THE PAGE AND CALL TO LoginHome
 class LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      //MATERIALAPP IS DEFINED HERE ITSELF TO PREVENT A FATAL EXCEPTION DURING NAVIGATION
       theme: ThemeData(
           primaryColor: Color(0xFF1b1b1b),
           cardColor: Color(0xFF212121),
@@ -34,10 +40,12 @@ class LoginPageState extends State<LoginPage> {
   }
 }
 
+//CONTAINS APPBAR, BODY AND IMPLEMENTATION OF _signIn()
 class LoginHome extends StatelessWidget {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
+  //For Google Sign In
   Future<FirebaseUser> _signIn(BuildContext context) async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
@@ -52,6 +60,8 @@ class LoginHome extends StatelessWidget {
     ProviderDetails providerInfo = ProviderDetails(userDetails.providerId);
     List<ProviderDetails> providerData = List<ProviderDetails>();
     providerData.add(providerInfo);
+
+    //Stores the details of the LoggedInUser
     UserDetails details = UserDetails(
         userDetails.providerId,
         userDetails.displayName,
@@ -60,32 +70,36 @@ class LoginHome extends StatelessWidget {
         userDetails.photoUrl);
 
     var wallpaperdb = FirebaseDatabase.instance.reference().child('Wallpapers');
-    // wallpaperdb
-    //     .child(details.userEmail.substring(0, details.userEmail.length - 4))
-    //     .child('display picture')
-    //     .set(details.photoUrl);
+
+    //Adding the LoggedInUser to the database
     wallpaperdb
         .child(details.userEmail.substring(0, details.userEmail.length - 4))
         .child('UserDetails')
         .set(details.getJson());
+
+    //Once LogIn is complete, LoggedInUser is navigated to MyApp()
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => MyApp(details)));
+        context, MaterialPageRoute(builder: (context) => HomePage(details)));
     return userDetails;
   }
 
+  //CONTAINS THE SCAFFOLD WHICH INCLUDES THE BUTTON THAT CALLS _signIn()
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          //Row for InstArhaam logo and text
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              //InstArhaam logo (Just a camera)
               Icon(
                 Icons.camera_alt,
                 size: 70.0,
               ),
+              //InstArhaam Text in Billabong font
               Text(
                 ' InstArhaam',
                 style: TextStyle(
@@ -95,16 +109,21 @@ class LoginHome extends StatelessWidget {
               )
             ],
           ),
+          //Row is used as a container for the RaisedButton, it keeps it wrapped to content and centralized
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              //RaisedButton for GoogleSignIn
               RaisedButton(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0)),
                 child: Row(children: <Widget>[
+                  //Google Icon from the 'font_awesome_flutter' package
                   Icon(FontAwesomeIcons.google, size: 20.0),
+                  //Sign in Text
                   Text('  Sign in with Google'),
                 ]),
+                //Pressing the button calls _signIn()
                 onPressed: () => _signIn(context),
               )
             ],
@@ -113,33 +132,4 @@ class LoginHome extends StatelessWidget {
       ),
     );
   }
-}
-
-class UserDetails {
-  final String providerDetails;
-  final String userName;
-  final String userEmail;
-  final String photoUrl;
-  final List<ProviderDetails> providerData;
-  UserDetails(this.providerDetails, this.userName, this.userEmail,
-      this.providerData, this.photoUrl);
-  getJson() {
-    return {
-      'userName': '${userName}',
-      'userEmail': '${userEmail}',
-      'photoUrl': '${photoUrl}',
-    };
-  }
-}
-
-class UserDisplayDetails {
-  final String dpUrl;
-  final String userEmail;
-  final String userName;
-  UserDisplayDetails(this.dpUrl, this.userEmail,this.userName);
-}
-
-class ProviderDetails {
-  final String providerDetails;
-  ProviderDetails(this.providerDetails);
 }
