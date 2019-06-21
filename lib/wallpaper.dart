@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:hello_flutter/wallpapermanagement.dart';
 
 import 'login.dart';
 
@@ -12,20 +10,29 @@ class Wallpaper {
   Image img;
   Text txt;
   String owner;
+  String photoUrl;
+  String userEmail;
+  String userName;
   bool liked;
 
-  Wallpaper(File img, Text txt, String owner) {
+  Wallpaper(File img, Text txt, String owner, String photoUrl, String userEmail, String userName) {
     this.img = Image.file(img);
     this.txt = txt;
     this.owner = owner;
+    this.photoUrl = photoUrl;
+    this.userEmail = userEmail;
+    this.userName = userName;
     liked = false;
   }
 
-  Wallpaper.ifImage(Image img, Text txt, String owner, bool liked) {
+  Wallpaper.ifImage(Image img, Text txt, String owner, bool liked, String photoUrl, String userEmail, String userName) {
     this.img = img;
     this.txt = txt;
     this.owner = owner;
     this.liked = liked;
+    this.photoUrl = photoUrl;
+    this.userEmail = userEmail;
+    this.userName = userName;
   }
 }
 
@@ -88,13 +95,12 @@ class WallpaperListState extends State<WallpaperListWidget> {
                                 padding: EdgeInsets.all(10),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(details.photoUrl,
-                                      height: 30),
-                                      //THIS DISPLAYS THE LOGGED IN USERS INFO
-                                      //CHANGE IT AND SAVE THE OWNER INFO ON FIREBASE AS WELL
+                                  child: Image.network(element.photoUrl,height: 30,),
+                                  //THIS DISPLAYS THE LOGGED IN USERS INFO
+                                  //CHANGE IT AND SAVE THE OWNER INFO ON FIREBASE AS WELL
                                 ),
                               ),
-                              Text(details.userName,
+                              Text(element.userName,
                                   style: TextStyle(color: Colors.white))
                             ],
                           ),

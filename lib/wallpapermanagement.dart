@@ -22,60 +22,77 @@ class AddWallpaper extends StatefulWidget {
 class AddWallpaperState extends State<AddWallpaper> {
   List<UserDisplayDetails> userlist = List();
   final UserDetails details;
+  int count = 0;
   List<Wallpaper> wallpaperlist = List();
   String tempurl = '',
       temptxt = '',
       tempowner = '',
       tempdpurl = '',
-      tempemail = '';
+      tempemail = '',
+      tempuname = '';
   bool templiked = false;
   var wallpaperdb = FirebaseDatabase.instance.reference().child('Wallpapers');
   AddWallpaperState(this.details) {
-    initWallpapers();
     initUsers();
+    initWallpapers();
   }
 
+//For initializing the wallpaper list from the Database
   initWallpapers() {
+    String
+        currentUser; //Cut email of the user whose images are currently being added to the wallpaperlist
+    // String tempdpurl = '',
+    //     tempuemail = '',
+    //     tempname = ''; //To fetch the user details into
+
     wallpaperdb.once().then((ds) {
-      Map emailds = ds.value;
+      Map emailds = ds.value; //DataSnapchat at the Cut email
       emailds.forEach((key, value) {
-        if (key ==
-            details.userEmail.substring(0, details.userEmail.length - 4)) {
-          Map imagesds = value;
-          imagesds.forEach((key, value) {
-            if (key.toString() == 'Images') {
-              Map elementsds = value;
-              elementsds.forEach((key, value) {
-                Map detailsds = value;
-                detailsds.forEach((key, value) {
-                  if (key.toString() == 'imageurl') {
-                    tempurl = value.toString();
-                  } else if (key.toString() == 'txt') {
-                    temptxt = value.toString();
-                  } else if (key.toString() == 'owner') {
-                    tempowner = value.toString();
-                  } else if (key.toString() == 'Liked by') {
-                    Map likedds = value;
-                    if (likedds.containsKey(details.userEmail
-                        .substring(0, details.userEmail.length - 4))) {
-                      templiked = true;
-                    } else {
-                      templiked = false;
-                    }
+        currentUser = key.toString(); //Setting the current user
+
+        Map imagesds =
+            value; //DataSnapshot at the Images child of the current user
+        imagesds.forEach((key, value) {
+          if (key.toString() == 'Images') {
+
+            Map elementsds = value;
+            elementsds.forEach((key, value) {
+              Map detailsds = value;
+              detailsds.forEach((key, value) {
+                if (key.toString() == 'imageurl') {
+                  tempurl = value.toString();
+                } else if (key.toString() == 'txt') {
+                  temptxt = value.toString();
+                } else if (key.toString() == 'owner') {
+                  tempowner = value.toString();
+                } else if (key.toString() == 'Liked by') {
+                  Map likedds = value;
+                  if (likedds.containsKey(details.userEmail
+                      .substring(0, details.userEmail.length - 4))) {
+                    //CHECKING IF THE LOGGED IN USER LIKED THIS IMAGE, DO NOT CHANGE ITS CORRECT
+                    templiked = true;
+                  } else {
+                    templiked = false;
                   }
-                });
-                wallpaperlist.add(new Wallpaper.ifImage(
-                    Image.network(
-                      tempurl,
-                    ),
-                    Text(temptxt),
-                    tempowner,
-                    templiked));
-                templiked = false;
+                }
               });
-            }
-          });
-        }
+              wallpaperlist.add(new Wallpaper.ifImage(
+                  Image.network(
+                    tempurl,
+                  ),
+                  Text(temptxt),
+                  tempowner,
+                  templiked,
+                  userlist[count].dpUrl,
+                  userlist[count].userEmail,
+                  userlist[count].userName));
+              count++;
+              templiked = false;
+              //THE ABOVE IMPLEMENTATION IF FOR EVERY SINGLE IMAGE IN THE DATABASE OF ALL USERS
+              //START THE IMPLEMENTATION OF FOLLOWERS AND FOLLOWING TO DISPLAY ONLY LOGGEDIN USERS IMAGES AND THE FOLLOWING USERS IMAGES
+            });
+          }
+        });
       });
       setState(() {});
     });
@@ -85,14 +102,24 @@ class AddWallpaperState extends State<AddWallpaper> {
     wallpaperdb.once().then((ds) {
       Map emailsds = ds.value;
       emailsds.forEach((key, value) async {
-        tempemail = key.toString();
-        Map dpds = value;
-        dpds.forEach((key, value) {
-          if (key.toString() == 'display picture') {
-            tempdpurl = value;
+        // tempemail = key.toString();
+        Map udds = value;
+        udds.forEach((key, value) {
+          if (key.toString() == 'UserDetails') {
+            // tempdpurl = value;
+            Map detailsds = value;
+            detailsds.forEach((key, value) {
+              if (key.toString() == 'photoUrl') {
+                tempdpurl = value;
+              } else if (key.toString() == 'userEmail') {
+                tempemail = value;
+              } else if (key.toString() == 'userName') {
+                tempuname = value;
+              }
+            });
           }
         });
-        userlist.add(UserDisplayDetails(tempdpurl, tempemail));
+        userlist.add(UserDisplayDetails(tempdpurl, tempemail, tempuname));
       });
     });
   }
@@ -158,12 +185,15 @@ class AddWallpaperState extends State<AddWallpaper> {
                                 child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
-                                Image.network(
-                                  element.dpUrl,
-                                  height: 50,
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    element.dpUrl,
+                                    height: 35,
+                                  ),
                                 ),
                                 Text(
-                                  element.userEmail,
+                                  element.userName,
                                   style: TextStyle(
                                     color: Colors.white,
                                   ),
@@ -236,7 +266,10 @@ class AddWallpaperState extends State<AddWallpaper> {
                         selectedImageFile,
                         imageTitle,
                         details.userEmail
-                            .substring(0, details.userEmail.length - 4));
+                            .substring(0, details.userEmail.length - 4),
+                        details.photoUrl,
+                        details.userEmail,
+                        details.userName);
                     uploadImage(w4, selectedImageFile);
                     wallpaperlist.add(w4);
                     setState(() {});

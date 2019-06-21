@@ -60,10 +60,14 @@ class LoginHome extends StatelessWidget {
         userDetails.photoUrl);
 
     var wallpaperdb = FirebaseDatabase.instance.reference().child('Wallpapers');
+    // wallpaperdb
+    //     .child(details.userEmail.substring(0, details.userEmail.length - 4))
+    //     .child('display picture')
+    //     .set(details.photoUrl);
     wallpaperdb
         .child(details.userEmail.substring(0, details.userEmail.length - 4))
-        .child('display picture')
-        .set(details.photoUrl);
+        .child('UserDetails')
+        .set(details.getJson());
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => MyApp(details)));
     return userDetails;
@@ -119,12 +123,20 @@ class UserDetails {
   final List<ProviderDetails> providerData;
   UserDetails(this.providerDetails, this.userName, this.userEmail,
       this.providerData, this.photoUrl);
+  getJson() {
+    return {
+      'userName': '${userName}',
+      'userEmail': '${userEmail}',
+      'photoUrl': '${photoUrl}',
+    };
+  }
 }
 
 class UserDisplayDetails {
   final String dpUrl;
   final String userEmail;
-  UserDisplayDetails(this.dpUrl, this.userEmail);
+  final String userName;
+  UserDisplayDetails(this.dpUrl, this.userEmail,this.userName);
 }
 
 class ProviderDetails {
