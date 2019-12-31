@@ -100,7 +100,12 @@ class HomePage extends StatelessWidget {
         //BODY CONTAINS THE COLUMN FOR [Row for View Users & Upload Image] and [Wallpaper cards]
         body: Column(
           children: <Widget>[
-            AddWallpaper(details),
+            // Column(
+              // children: <Widget>[
+                Management(details),
+                // MainFeed(details),
+              // ],
+            // )
           ],
         ),
       ),

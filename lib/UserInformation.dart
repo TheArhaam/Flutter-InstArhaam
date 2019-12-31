@@ -4,14 +4,17 @@ class UserDetails {
   final String userEmail;
   final String photoUrl;
   final List<ProviderDetails> providerData;
+
   UserDetails(this.providerDetails, this.userName, this.userEmail,
       this.providerData, this.photoUrl);
+
   getJson() {
     return {
       'userName': '${userName}',
       'userEmail': '${userEmail}',
       'photoUrl': '${photoUrl}',
     };
+    
   }
 }
 
@@ -21,8 +24,13 @@ class ProviderDetails {
 }
 
 class UserDisplayDetails {
-  final String dpUrl;
-  final String userEmail;
-  final String userName;
+  String dpUrl;
+  String userEmail;
+  String userName;
   UserDisplayDetails(this.dpUrl, this.userEmail,this.userName);
+  UserDisplayDetails.fromJSON(Map udd) {
+    this.dpUrl = udd['UserDetails']['photoUrl'];
+    this.userEmail = udd['UserDetails']['userEmail'];
+    this.userName = udd['UserDetails']['userName'];
+  }
 }

@@ -8,18 +8,18 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-class AddWallpaper extends StatefulWidget {
+class Management extends StatefulWidget {
   final UserDetails details;
 
-  AddWallpaper(this.details);
+  Management(this.details);
 
   @override
   State<StatefulWidget> createState() {
-    return AddWallpaperState(details);
+    return ManagementState(details);
   }
 }
 
-class AddWallpaperState extends State<AddWallpaper> {
+class ManagementState extends State<Management> {
   List<UserDisplayDetails> userlist = List();
   final UserDetails details;
   int count = 0;
@@ -32,98 +32,56 @@ class AddWallpaperState extends State<AddWallpaper> {
       tempuname = '';
   bool templiked = false;
   var wallpaperdb = FirebaseDatabase.instance.reference().child('Wallpapers');
-  AddWallpaperState(this.details) {
-    initUsers();
-    initWallpapers();
+
+  ManagementState(this.details) {
+    // initUsers();
+    // initWallpapers();
+    // userlist = initUsers();
+    // wallpaperlist = initWallpapers(details, userlist);
+
+    //NEW IMPLEMENTATION
+    wallpaperdb.onChildAdded.listen(dbadd);
+    wallpaperdb.onChildRemoved.listen(dbremove);
   }
 
-//For initializing the wallpaper list from the Database
-  initWallpapers() {
-    String
-        currentUser; //Cut email of the user whose images are currently being added to the wallpaperlist
-
-    wallpaperdb.once().then((ds) {
-      Map emailds = ds.value; //DataSnapchat at the Cut email
-      emailds.forEach((key, value) {
-        currentUser = key.toString(); //Setting the current user
-
-        Map imagesds =
-            value; //DataSnapshot at the Images child of the current user
-        imagesds.forEach((key, value) {
-          if (key.toString() == 'Images') {
-
-            Map elementsds = value;
-            elementsds.forEach((key, value) {
-              Map detailsds = value;
-              detailsds.forEach((key, value) {
-                if (key.toString() == 'imageurl') {
-                  tempurl = value.toString();
-                } else if (key.toString() == 'txt') {
-                  temptxt = value.toString();
-                } else if (key.toString() == 'owner') {
-                  tempowner = value.toString();
-                } else if (key.toString() == 'Liked by') {
-                  Map likedds = value;
-                  if (likedds.containsKey(details.userEmail
-                      .substring(0, details.userEmail.length - 4))) {
-                    //CHECKING IF THE LOGGED IN USER LIKED THIS IMAGE, DO NOT CHANGE ITS CORRECT
-                    templiked = true;
-                  } else {
-                    templiked = false;
-                  }
-                }
-              });
-              wallpaperlist.add(new Wallpaper.ifImage(
-                  Image.network(
-                    tempurl,
-                  ),
-                  Text(temptxt),
-                  tempowner,
-                  templiked,
-                  userlist[count].dpUrl,
-                  userlist[count].userEmail,
-                  userlist[count].userName));
-              count++;
-              templiked = false;
-              //THE ABOVE IMPLEMENTATION IF FOR EVERY SINGLE IMAGE IN THE DATABASE OF ALL USERS
-              //START THE IMPLEMENTATION OF FOLLOWERS AND FOLLOWING TO DISPLAY ONLY LOGGEDIN USERS IMAGES AND THE FOLLOWING USERS IMAGES
-              //WILL PROBABLY HAVE TO CREATE A CLASS TO STORE THE OWNER AND COUNT SO WE CAN DYNAMICALLY ACCESS THE COUNT FOR DESIRED USERS
-            });
-          }
-        });
-      });
+  dbadd(Event event) {
+    //For userlist
+    var user = new UserDisplayDetails.fromJSON(event.snapshot.value);
+    userlist.add(user);
+    setState(() {});
+    //For wallpaperlist
+    var userdb = FirebaseDatabase.instance
+        .reference()
+        .child('Wallpapers')
+        .child(user.userEmail.substring(0, user.userEmail.length - 4))
+        .child('Images');
+    userdb.onChildAdded.listen((Event uevent) {
+      var wallp = new Wallpaper.fromJSON(uevent.snapshot.value, user);
+      wallpaperlist.add(wallp);
       setState(() {});
     });
   }
 
-  initUsers() {
-    wallpaperdb.once().then((ds) {
-      Map emailsds = ds.value;
-      emailsds.forEach((key, value) async {
-        // tempemail = key.toString();
-        Map udds = value;
-        udds.forEach((key, value) {
-          if (key.toString() == 'UserDetails') {
-            // tempdpurl = value;
-            Map detailsds = value;
-            detailsds.forEach((key, value) {
-              if (key.toString() == 'photoUrl') {
-                tempdpurl = value;
-              } else if (key.toString() == 'userEmail') {
-                tempemail = value;
-              } else if (key.toString() == 'userName') {
-                tempuname = value;
-              }
-            });
-          }
-        });
-        userlist.add(UserDisplayDetails(tempdpurl, tempemail, tempuname));
+  dbremove(Event event) {
+    var user = new UserDisplayDetails.fromJSON(event.snapshot.value);
+    var userdb = FirebaseDatabase.instance
+        .reference()
+        .child('Wallpapers')
+        .child(user.userEmail.substring(0, user.userEmail.length - 4))
+        .child('Images');
+    userdb.onChildRemoved.listen((Event uevent) {
+      wallpaperlist.removeWhere((w) {
+        if (w.txt == (new Wallpaper.fromJSON(event.snapshot.value, user).txt)) {
+          return true;
+        }
+        return false;
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final double hsize = MediaQuery.of(context).size.height - 128.0;
     return Column(
       children: <Widget>[
         Row(
