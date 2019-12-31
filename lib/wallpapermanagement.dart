@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hello_flutter/userinformation.dart';
 import 'wallpaper.dart';
@@ -169,6 +170,9 @@ class ManagementState extends State<Management> {
   }
 
   dialogForInput(BuildContext context) {
+    //CREATE A SEPARATE STATE FOR THIS SO YOU CAN IMPLEMENT SPINNERS FOR LOADING
+    //THIS IS IMPORTANT
+    bool spinnervisibility = false;
     File selectedImageFile;
     Text imageTitle;
     return showDialog(
@@ -218,6 +222,9 @@ class ManagementState extends State<Management> {
                 ),
                 RaisedButton(
                   onPressed: () async {
+                    setState(() {
+                      spinnervisibility = true;
+                    });
                     Wallpaper w4 = new Wallpaper(
                         selectedImageFile,
                         imageTitle,
@@ -228,7 +235,7 @@ class ManagementState extends State<Management> {
                         details.userName);
                     await uploadImage(w4, selectedImageFile);
                     // wallpaperlist.add(w4);
-                    setState(() {});
+                    // setState(() {});
                     Navigator.pop(context);
                   },
                   child: Row(
@@ -236,7 +243,14 @@ class ManagementState extends State<Management> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Icon(Icons.cloud_upload),
-                      Text(' Upload')
+                      Text(' Upload'),
+                      Visibility(
+                        visible: spinnervisibility,
+                        child: SpinKitFadingFour(
+                          duration: Duration(seconds: 1),
+                          color: Colors.red,
+                        ),
+                      ),
                     ],
                   ),
                 )

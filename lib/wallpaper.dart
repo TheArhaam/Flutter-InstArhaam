@@ -4,7 +4,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hello_flutter/userinformation.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class Wallpaper {
   Image img;
