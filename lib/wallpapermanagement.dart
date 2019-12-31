@@ -217,7 +217,7 @@ class ManagementState extends State<Management> {
                   },
                 ),
                 RaisedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     Wallpaper w4 = new Wallpaper(
                         selectedImageFile,
                         imageTitle,
@@ -226,8 +226,8 @@ class ManagementState extends State<Management> {
                         details.photoUrl,
                         details.userEmail,
                         details.userName);
-                    uploadImage(w4, selectedImageFile);
-                    wallpaperlist.add(w4);
+                    await uploadImage(w4, selectedImageFile);
+                    // wallpaperlist.add(w4);
                     setState(() {});
                     Navigator.pop(context);
                   },
@@ -263,5 +263,6 @@ class ManagementState extends State<Management> {
         .child('Images')
         .child(fwallpaper.txt)
         .set(fwallpaper.getJSON());
+    return;
   }
 }
