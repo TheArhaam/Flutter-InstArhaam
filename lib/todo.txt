@@ -3,3 +3,7 @@
     1.Mainfeed
     2.UploadImage
     3.Profile
+-Use Image.network(loadingBuilder:(){}) for getting the progress of the image download
+-Fix the rerendering of images in the list
+-Modify database to generate uniqueID based on date and use it as the main key for the image
+ 
