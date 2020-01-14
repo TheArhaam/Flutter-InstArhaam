@@ -1,0 +1,5 @@
+-Create a new Page for uploading an image
+-Create a bottom navigationbar
+    1.Mainfeed
+    2.UploadImage
+    3.Profile
