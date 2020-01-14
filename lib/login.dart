@@ -7,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hello_flutter/userinformation.dart';
 import 'package:hello_flutter/home.dart';
+import 'package:flutter/services.dart';
 
 //CREATES LoginPageState
 class LoginPage extends StatefulWidget {
@@ -116,7 +117,7 @@ class LoginHome extends StatelessWidget {
               //RaisedButton for GoogleSignIn
               RaisedButton(
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0)),
+                    borderRadius: BorderRadius.circular(0)),
                 child: Row(children: <Widget>[
                   //Google Icon from the 'font_awesome_flutter' package
                   Icon(FontAwesomeIcons.google, size: 20.0),
