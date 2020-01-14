@@ -24,6 +24,7 @@ class LoginPageState extends State<LoginPage> {
     return MaterialApp(
       //MATERIALAPP IS DEFINED HERE ITSELF TO PREVENT A FATAL EXCEPTION DURING NAVIGATION
       theme: ThemeData(
+          accentColor: Color(0xFF1b1b1b),
           primaryColor: Color(0xFF1b1b1b),
           cardColor: Color(0xFF212121),
           canvasColor: Color(0xFF484848),
@@ -92,26 +93,33 @@ class LoginHome extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           //Row for InstArhaam logo and text
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              //InstArhaam logo (Just a camera)
-              Icon(
-                Icons.camera_alt,
-                size: 70.0,
-              ),
-              //InstArhaam Text in Billabong font
-              Text(
-                ' InstArhaam',
-                style: TextStyle(
-                    fontFamily: 'Billabong',
-                    fontSize: 70.0,
-                    color: Colors.white),
-              )
-            ],
+          Container(
+            padding: EdgeInsets.all(20),
+            color: Theme.of(context).primaryColor,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                //InstArhaam logo (Just a camera)
+                Icon(
+                  Icons.camera_alt,
+                  size: 70.0,
+                ),
+                //InstArhaam Text in Billabong font
+                Text(
+                  ' InstArhaam',
+                  style: TextStyle(
+                      fontFamily: 'Billabong',
+                      fontSize: 70.0,
+                      color: Colors.white),
+                )
+              ],
+            ),
           ),
+
           //Row is used as a container for the RaisedButton, it keeps it wrapped to content and centralized
-          Row(
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               //RaisedButton for GoogleSignIn
@@ -128,7 +136,7 @@ class LoginHome extends StatelessWidget {
                 onPressed: () => _signIn(context),
               )
             ],
-          )
+          ))
         ],
       ),
     );

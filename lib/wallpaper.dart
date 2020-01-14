@@ -101,6 +101,7 @@ class WallpaperListState extends State<WallpaperListWidget> {
     return Container(
       height: hsize,
       child: ListView(
+          addAutomaticKeepAlives: true,
           children: wallpaperlist
               .map(
                 (element) => Card(

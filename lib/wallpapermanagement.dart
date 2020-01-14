@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hello_flutter/userinformation.dart';
+import 'package:hello_flutter/userlist.dart';
 import 'wallpaper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -88,18 +89,22 @@ class ManagementState extends State<Management> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            RaisedButton(
-              onPressed: () async {
-                await dialogForUsers(context);
-                setState(() {});
-                //USERS ARE INITIALIZED ONLY ONCE WHEN CONSTRUCTOR IS CALLED
-                //LOOK INTO IT
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[Icon(Icons.contacts), Text('  View Users')],
-              ),
-            ),
+            // RaisedButton(
+            //   onPressed: () async {
+            //     // await dialogForUsers(context);
+            //     showDialog(
+            //       context: context,
+            //       builder: (BuildContext context) => UserListPage(),
+            //     );
+            //     setState(() {});
+            //     //USERS ARE INITIALIZED ONLY ONCE WHEN CONSTRUCTOR IS CALLED
+            //     //LOOK INTO IT
+            //   },
+            //   child: Row(
+            //     mainAxisSize: MainAxisSize.min,
+            //     children: <Widget>[Icon(Icons.contacts), Text('  View Users')],
+            //   ),
+            // ),
             RaisedButton(
                 onPressed: () {
                   dialogForInput(context);

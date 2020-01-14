@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hello_flutter/userinformation.dart';
+import 'package:hello_flutter/userlist.dart';
 import 'package:hello_flutter/wallpapermanagement.dart';
 
 //
@@ -20,6 +21,7 @@ class HomePage extends StatelessWidget {
     return MaterialApp(
       //Theme for the entire HomePage
       theme: ThemeData(
+        accentColor: Color(0xFF1b1b1b),
         primaryColor: Color(0xFF1b1b1b),
         cardColor: Color(0xFF212121),
         canvasColor: Color(0xFF484848),
@@ -95,16 +97,26 @@ class HomePage extends StatelessWidget {
             )
           ],
           centerTitle: true,
+          //For opening the dialog to view a list of users
+          leading: RaisedButton(
+            onPressed: () async {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => UserListPage(),
+              );
+            },
+            child: Icon(Icons.contacts),
+          ),
         ),
 
         //BODY CONTAINS THE COLUMN FOR [Row for View Users & Upload Image] and [Wallpaper cards]
         body: Column(
           children: <Widget>[
             // Column(
-              // children: <Widget>[
-                Management(details),
-                // MainFeed(details),
-              // ],
+            // children: <Widget>[
+            Management(details),
+            // MainFeed(details),
+            // ],
             // )
           ],
         ),
