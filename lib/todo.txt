@@ -1,3 +1,4 @@
+-Implement Followers and Following
 -Create a new Page for uploading an image, replace the "Upload Image" button
 -Create a bottom navigationbar
     1.Mainfeed

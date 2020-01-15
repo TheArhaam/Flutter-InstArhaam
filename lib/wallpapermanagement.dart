@@ -77,7 +77,6 @@ class ManagementState extends State<Management> {
 
   @override
   Widget build(BuildContext context) {
-    final double hsize = MediaQuery.of(context).size.height - 128.0;
     return Column(
       children: <Widget>[
         Row(
