@@ -74,7 +74,7 @@ class HomePageState extends State<HomePage> {
         //"resizeToAvoidBottomInset: false" prevents everything else from moving when keyboard comes up
         //opening the KeyBoard for the UploadImage dialog was causing an overflow for the Scaffold
         //so this was made false to prevent the scaffold elements from overflowing
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
 
         //AppBar contains InstArhaam logo and Text, Name of the LoggedInUser and SignOut IconButton
         appBar: AppBar(
