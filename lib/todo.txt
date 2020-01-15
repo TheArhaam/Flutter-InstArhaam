@@ -14,3 +14,4 @@
     -Figure out a way to skip signin for already signed in users
     -Add more signup options to make the login page less bland 
 -Try to implement Hero() widget for InstArhaam logo on login page to Mainfeed
+-Try to use "Issues" in github instead of creating a temporary ToDo list

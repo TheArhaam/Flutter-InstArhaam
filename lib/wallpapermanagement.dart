@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hello_flutter/userinformation.dart';
-import 'package:hello_flutter/userlist.dart';
 import 'wallpaper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -36,11 +35,6 @@ class ManagementState extends State<Management> {
   var wallpaperdb = FirebaseDatabase.instance.reference().child('Wallpapers');
 
   ManagementState(this.details) {
-    // initUsers();
-    // initWallpapers();
-    // userlist = initUsers();
-    // wallpaperlist = initWallpapers(details, userlist);
-
     //NEW IMPLEMENTATION
     wallpaperdb.onChildAdded.listen(dbadd);
     wallpaperdb.onChildRemoved.listen(dbremove);
@@ -89,22 +83,6 @@ class ManagementState extends State<Management> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            // RaisedButton(
-            //   onPressed: () async {
-            //     // await dialogForUsers(context);
-            //     showDialog(
-            //       context: context,
-            //       builder: (BuildContext context) => UserListPage(),
-            //     );
-            //     setState(() {});
-            //     //USERS ARE INITIALIZED ONLY ONCE WHEN CONSTRUCTOR IS CALLED
-            //     //LOOK INTO IT
-            //   },
-            //   child: Row(
-            //     mainAxisSize: MainAxisSize.min,
-            //     children: <Widget>[Icon(Icons.contacts), Text('  View Users')],
-            //   ),
-            // ),
             RaisedButton(
                 onPressed: () {
                   dialogForInput(context);
@@ -124,55 +102,6 @@ class ManagementState extends State<Management> {
     );
   }
 
-  dialogForUsers(BuildContext context) {
-    final double hsize = MediaQuery.of(context).size.height - 280.0;
-    final double wsize = MediaQuery.of(context).size.width - 150.0;
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-              elevation: 10,
-              titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  side: BorderSide(width: 5, color: Color(0xFF1b1b1b))),
-              backgroundColor: Color(0xFF484848),
-              title: Text('USERS'),
-              content: Container(
-                width: wsize,
-                height: hsize,
-                child: ListView(
-                    children: userlist
-                        .map((element) => Card(
-                                child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(
-                                    element.dpUrl,
-                                    height: 35,
-                                  ),
-                                ),
-                                Text(
-                                  element.userName,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: Icon(
-                                    FontAwesomeIcons.plus,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
-                                )
-                              ],
-                            )))
-                        .toList()),
-              ));
-        });
-  }
 
   dialogForInput(BuildContext context) {
     //CREATE A SEPARATE STATE FOR THIS SO YOU CAN IMPLEMENT SPINNERS FOR LOADING

@@ -7,7 +7,6 @@ import 'package:hello_flutter/userinformation.dart';
 import 'package:hello_flutter/userlist.dart';
 import 'package:hello_flutter/wallpapermanagement.dart';
 
-//
 class HomePage extends StatelessWidget {
   final UserDetails details; //this will store the LoggedInUsers details
   HomePage(
