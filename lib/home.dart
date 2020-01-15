@@ -3,14 +3,48 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hello_flutter/uploadpage.dart';
 import 'package:hello_flutter/userinformation.dart';
 import 'package:hello_flutter/userlist.dart';
 import 'package:hello_flutter/wallpapermanagement.dart';
 
-class HomePage extends StatelessWidget {
-  final UserDetails details; //this will store the LoggedInUsers details
-  HomePage(
-      this.details); //its called from LoginHome and the details are received after _signIn() is complete
+class HomePage extends StatefulWidget {
+  UserDetails details;
+  HomePage(UserDetails details) {
+    this.details = details;
+  }
+  @override
+  State<StatefulWidget> createState() {
+    return HomePageState(details);
+  }
+}
+
+class HomePageState extends State<HomePage> {
+  UserDetails details;
+  List<Widget> pages;
+  int bottomSelectedIndex = 0;
+
+  //For generating the items for BottomNavigationBar
+  List<BottomNavigationBarItem> buildBottomNavBarItems() {
+    return [
+      //FEED
+      BottomNavigationBarItem(icon: Icon(Icons.filter), title: Text('FEED')),
+      //UPLOAD
+      BottomNavigationBarItem(
+          icon: Icon(Icons.add_a_photo), title: Text('UPLOAD'))
+    ];
+  }
+
+  //For the PageView
+  PageController pageController = PageController(
+    initialPage: 0,
+    keepPage: true,
+  );
+
+  HomePageState(UserDetails details) {
+    this.details = details;
+    pages = [Management(details), UploadPage(details)];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +54,7 @@ class HomePage extends StatelessWidget {
     return MaterialApp(
       //Theme for the entire HomePage
       theme: ThemeData(
+        appBarTheme: AppBarTheme(color: Color(0xFF1b1b1b)),
         accentColor: Color(0xFF1b1b1b),
         primaryColor: Color(0xFF1b1b1b),
         cardColor: Color(0xFF212121),
@@ -109,15 +144,29 @@ class HomePage extends StatelessWidget {
         ),
 
         //BODY CONTAINS THE COLUMN FOR [Row for View Users & Upload Image] and [Wallpaper cards]
-        body: Column(
-          children: <Widget>[
-            // Column(
-            // children: <Widget>[
-            Management(details),
-            // MainFeed(details),
-            // ],
-            // )
-          ],
+        body: //PAGEVIEW
+            PageView.builder(
+          itemBuilder: (context, position) => pages[position],
+          itemCount: pages.length,
+          controller: pageController,
+          onPageChanged: (index) {
+            setState(() {
+              bottomSelectedIndex = index;
+            });
+          },
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: bottomSelectedIndex,
+          items: buildBottomNavBarItems(),
+          backgroundColor: Theme.of(context).primaryColor,
+          unselectedFontSize: 10,
+          onTap: (index) {
+            bottomSelectedIndex = index;
+            pageController.animateToPage(index,
+                curve: Curves.ease, duration: Duration(milliseconds: 500));
+          },
+          unselectedItemColor: Colors.grey,
+          selectedItemColor: Colors.white,
         ),
       ),
     );

@@ -97,9 +97,9 @@ class WallpaperListState extends State<WallpaperListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final double hsize = MediaQuery.of(context).size.height - 128.0;
+    final double hsize = MediaQuery.of(context).size.height;
     return Container(
-      height: hsize,
+      height: hsize-kBottomNavigationBarHeight-kToolbarHeight-24,
       child: ListView(
           addAutomaticKeepAlives: true,
           children: wallpaperlist
