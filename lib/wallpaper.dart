@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hello_flutter/userinformation.dart';
+import 'package:image_fade/image_fade.dart';
 
 class Wallpaper {
   Image img;
@@ -99,123 +100,143 @@ class WallpaperListState extends State<WallpaperListWidget> {
   Widget build(BuildContext context) {
     final double hsize = MediaQuery.of(context).size.height;
     return Container(
-      height: hsize-kBottomNavigationBarHeight-kToolbarHeight-24,
+      height: hsize - kBottomNavigationBarHeight - kToolbarHeight - 24,
       child: ListView(
           addAutomaticKeepAlives: true,
-          children: wallpaperlist
-              .map(
-                (element) => Card(
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.all(10),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                element.photoUrl,
-                                height: 30,
-                              ),
-                              //THIS DISPLAYS THE LOGGED IN USERS INFO
-                              //CHANGE IT AND SAVE THE OWNER INFO ON FIREBASE AS WELL
+          children: wallpaperlist.map(
+            (element) {
+              return Card(
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.all(10),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              element.photoUrl,
+                              height: 30,
                             ),
+                            //THIS DISPLAYS THE LOGGED IN USERS INFO
+                            //CHANGE IT AND SAVE THE OWNER INFO ON FIREBASE AS WELL
                           ),
-                          Text(element.userName,
-                              style: TextStyle(color: Colors.white))
-                        ],
-                      ),
-                      //IMAGE
-                      FadeInImage.assetNetwork(
-                        image: element.imglink,
-                        placeholder: 'assets/Loading.gif',
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                              child: Padding(
-                                  padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                                  child: Text(element.txt.data,
-                                      style: TextStyle(color: Colors.white)))),
-                          Row(
-                            children: <Widget>[
-                              IconButton(
-                                splashColor: Colors.white,
-                                icon: checkFav(element),
-                                onPressed: () {
-                                  setState(() {
-                                    if (element.liked == false) {
-                                      element.liked = true;
-                                      wallpaperdb
-                                          .child(element.owner)
-                                          .child('Images')
-                                          .child(element.txt.data)
-                                          .child('Liked by')
-                                          .child(details.userEmail.substring(
-                                              0, details.userEmail.length - 4))
-                                          .set(true);
-                                    } else if (element.liked == true) {
-                                      element.liked = false;
-                                      wallpaperdb
-                                          .child(element.owner)
-                                          .child('Images')
-                                          .child(element.txt.data)
-                                          .child('Liked by')
-                                          .child(details.userEmail.substring(
-                                              0, details.userEmail.length - 4))
-                                          .remove();
-                                    }
-                                  });
+                        ),
+                        Text(element.userName,
+                            style: TextStyle(color: Colors.white))
+                      ],
+                    ),
+                    //IMAGE
+                    //For implementing progressbar along with FadeInImage
+                    //FadInImage doesnt provide 'loadingBuilder'
+                    //ImageFade adds 'loadingBuilder' and other features on top of FadeInImage
+                    ImageFade(
+                      image: NetworkImage(element.imglink),
+                      placeholder: Image.asset('assets/Loading.gif'),
+                      loadingBuilder: (context, widget, event) {
+                        if (event == null) {
+                          return widget;
+                        }
+                        double val;
+                        if (null == event.expectedTotalBytes) {
+                          val = 0.0;
+                        } else {
+                          val = event.cumulativeBytesLoaded /
+                              event.expectedTotalBytes;
+                        }
+                        return LinearProgressIndicator(
+                          backgroundColor: Colors.white,
+                          value: val,
+                        );
+                      },
+                    ),
+
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                            child: Padding(
+                                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                                child: Text(element.txt.data,
+                                    style: TextStyle(color: Colors.white)))),
+                        Row(
+                          children: <Widget>[
+                            IconButton(
+                              splashColor: Colors.white,
+                              icon: checkFav(element),
+                              onPressed: () {
+                                setState(() {
+                                  if (element.liked == false) {
+                                    element.liked = true;
+                                    wallpaperdb
+                                        .child(element.owner)
+                                        .child('Images')
+                                        .child(element.txt.data)
+                                        .child('Liked by')
+                                        .child(details.userEmail.substring(
+                                            0, details.userEmail.length - 4))
+                                        .set(true);
+                                  } else if (element.liked == true) {
+                                    element.liked = false;
+                                    wallpaperdb
+                                        .child(element.owner)
+                                        .child('Images')
+                                        .child(element.txt.data)
+                                        .child('Liked by')
+                                        .child(details.userEmail.substring(
+                                            0, details.userEmail.length - 4))
+                                        .remove();
+                                  }
+                                });
+                              },
+                            ),
+                            Theme(
+                              data: Theme.of(context)
+                                  .copyWith(cardColor: Color(0xFF484848)),
+                              child: PopupMenuButton(
+                                onSelected: (var choice) {
+                                  if (choice == 'Delete') {
+                                    wallpaperdb
+                                        .child(element.owner)
+                                        .child('Images')
+                                        .child(element.txt.data)
+                                        .remove();
+
+                                    FirebaseStorage.instance
+                                        .ref()
+                                        .child('Wallpapers')
+                                        .child(element.owner)
+                                        .child(element.txt.data)
+                                        .delete();
+
+                                    wallpaperlist.remove(element);
+                                    setState(() {});
+                                  }
+                                },
+                                icon: Icon(Icons.menu),
+                                itemBuilder: (BuildContext context) {
+                                  return <PopupMenuItem>[
+                                    PopupMenuItem(
+                                      value: 'Delete',
+                                      child: Text(
+                                        'Delete',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    )
+                                  ];
                                 },
                               ),
-                              Theme(
-                                data: Theme.of(context)
-                                    .copyWith(cardColor: Color(0xFF484848)),
-                                child: PopupMenuButton(
-                                  onSelected: (var choice) {
-                                    if (choice == 'Delete') {
-                                      wallpaperdb
-                                          .child(element.owner)
-                                          .child('Images')
-                                          .child(element.txt.data)
-                                          .remove();
-
-                                      FirebaseStorage.instance
-                                          .ref()
-                                          .child('Wallpapers')
-                                          .child(element.owner)
-                                          .child(element.txt.data)
-                                          .delete();
-
-                                      wallpaperlist.remove(element);
-                                      setState(() {});
-                                    }
-                                  },
-                                  icon: Icon(Icons.menu),
-                                  itemBuilder: (BuildContext context) {
-                                    return <PopupMenuItem>[
-                                      PopupMenuItem(
-                                        value: 'Delete',
-                                        child: Text(
-                                          'Delete',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      )
-                                    ];
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              )
-              .toList()),
+              );
+            },
+          ).toList()),
     );
   }
 
