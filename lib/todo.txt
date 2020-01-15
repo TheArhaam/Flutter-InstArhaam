@@ -16,3 +16,8 @@
     -Add more signup options to make the login page less bland 
 -Try to implement Hero() widget for InstArhaam logo on login page to Mainfeed
 -Try to use "Issues" in github instead of creating a temporary ToDo list
+-Fix the upload button spinner and other bugs that cause the screen to black out after upload is complete
+-Limit the card height to make sure it is completely visible on the screen
+
+COMPLETE:
+-Appbar title is not in the center, UsersList is pushing it to the right, fix it

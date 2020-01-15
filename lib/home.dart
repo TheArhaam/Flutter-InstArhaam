@@ -81,11 +81,13 @@ class HomePageState extends State<HomePage> {
           //Row for [InstArhaam logo] and [Column for InstArhaam Text, Line and LoggedInUsers name]
           title: Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Icon(Icons.camera_alt),
               //Column for [InstArhaam Text], [Line] and [LoggedInUsers name]
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   //InstArhaam text
                   Text(
@@ -116,7 +118,9 @@ class HomePageState extends State<HomePage> {
           ),
 
           actions: <Widget>[
-            //IconButton for Signing Out
+            //USER LIST
+            
+            // IconButton for Signing Out
             IconButton(
               icon: Icon(
                 FontAwesomeIcons.signOutAlt,
@@ -132,15 +136,15 @@ class HomePageState extends State<HomePage> {
           ],
           centerTitle: true,
           //For opening the dialog to view a list of users
-          leading: RaisedButton(
-            onPressed: () async {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) => UserListPage(),
-              );
-            },
-            child: Icon(Icons.contacts),
-          ),
+          leading: IconButton(
+              icon: Icon(Icons.contacts),
+              onPressed: () async {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => UserListPage(),
+                );
+              },
+            ),
         ),
 
         //BODY CONTAINS THE COLUMN FOR [Row for View Users & Upload Image] and [Wallpaper cards]
