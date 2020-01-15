@@ -119,7 +119,7 @@ class HomePageState extends State<HomePage> {
 
           actions: <Widget>[
             //USER LIST
-            
+
             // IconButton for Signing Out
             IconButton(
               icon: Icon(
@@ -137,14 +137,14 @@ class HomePageState extends State<HomePage> {
           centerTitle: true,
           //For opening the dialog to view a list of users
           leading: IconButton(
-              icon: Icon(Icons.contacts),
-              onPressed: () async {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) => UserListPage(),
-                );
-              },
-            ),
+            icon: Icon(Icons.contacts),
+            onPressed: () async {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => UserListPage(),
+              );
+            },
+          ),
         ),
 
         //BODY CONTAINS THE COLUMN FOR [Row for View Users & Upload Image] and [Wallpaper cards]

@@ -1,23 +1,23 @@
 -Implement Followers and Following
--Create a new Page for uploading an image, replace the "Upload Image" button
 -Create a bottom navigationbar
     1.Mainfeed
     2.UploadImage
     3.Profile
--Use Image.network(loadingBuilder:(){}) for getting the progress of the image download
 -Fix the rerendering of images in the list
 -Modify database to generate uniqueID based on date and use it as the main key for the image
 -Make sure newest Images show up on top (in Database)
 -Show newer images on top in the Mainfeed
--Manage the files to have appropriate classes and functions in their respective files
 -Implement animation for the login screen
 -SignIn/SignOut/SignUp
     -Figure out a way to skip signin for already signed in users
     -Add more signup options to make the login page less bland 
--Try to implement Hero() widget for InstArhaam logo on login page to Mainfeed
+-Try to implement Hero() widget for InstArhaam logo on login page to Mainfeed [TRIED|NOT WORKING AS EXPECTED|FURTHER RESEARCH REQUIRED]
 -Try to use "Issues" in github instead of creating a temporary ToDo list
--Fix the upload button spinner and other bugs that cause the screen to black out after upload is complete
 -Limit the card height to make sure it is completely visible on the screen
 
 COMPLETE:
+-Manage the files to have appropriate classes and functions in their respective files
+-Create a new Page for uploading an image, replace the "Upload Image" button
 -Appbar title is not in the center, UsersList is pushing it to the right, fix it
+-Use Image.network(loadingBuilder:(){}) for getting the progress of the image download
+-Fix the upload button spinner and other bugs that cause the screen to black out after upload is complete

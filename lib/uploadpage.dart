@@ -131,21 +131,21 @@ class UploadPageState extends State<UploadPage> {
                     details.userEmail,
                     details.userName);
                 await uploadImage(w4, selectedImageFile);
-                // wallpaperlist.add(w4);
-                // setState(() {});
-                Navigator.pop(context);
+                spinnervisibility = false;
+                setState(() {});
               },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Icon(Icons.cloud_upload),
-                  Text(' Upload'),
+                  Text(' Upload '),
                   Visibility(
                     visible: spinnervisibility,
                     child: SpinKitFadingFour(
+                      size: 20,
                       duration: Duration(seconds: 1),
-                      color: Colors.red,
+                      color: Colors.white,
                     ),
                   ),
                 ],
