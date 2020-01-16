@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hello_flutter/userinformation.dart';
 import 'package:image_fade/image_fade.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class Wallpaper {
   Image img;
@@ -105,6 +106,9 @@ class WallpaperListState extends State<WallpaperListWidget> {
           addAutomaticKeepAlives: true,
           children: wallpaperlist.map(
             (element) {
+              double val = 0.0;
+              bool visibility = true;
+              bool loadingVisibility = true;
               return Card(
                 child: Column(
                   children: <Widget>[
@@ -130,24 +134,62 @@ class WallpaperListState extends State<WallpaperListWidget> {
                     //For implementing progressbar along with FadeInImage
                     //FadInImage doesnt provide 'loadingBuilder'
                     //ImageFade adds 'loadingBuilder' and other features on top of FadeInImage
-                    ImageFade(
-                      image: NetworkImage(element.imglink),
-                      placeholder: Image.asset('assets/Loading.gif'),
-                      loadingBuilder: (context, widget, event) {
+                    //VERSION-1
+                    // Stack(
+                    //   children: <Widget>[
+                    //     Center(child: CircularProgressIndicator()),
+                    //     Center(
+                    //       child: FadeInImage.memoryNetwork(
+                    //         placeholder: kTransparentImage,
+                    //         image: element.imglink,
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    //VERSION-2
+                    // ImageFade(
+                    //   image: NetworkImage(element.imglink),
+                    //   placeholder: Image.asset('assets/Loading.gif'),
+                    //   loadingBuilder: (context, widget, event) {
+                    //     if (event == null) {
+                    //       return widget;
+                    //     }
+                    //     double val;
+                    //     if (null == event.expectedTotalBytes) {
+                    //       val = 0.0;
+                    //     } else {
+                    //       val = event.cumulativeBytesLoaded /
+                    //           event.expectedTotalBytes;
+                    //     }
+                    //     return LinearProgressIndicator(
+                    //       backgroundColor: Colors.white,
+                    //       value: val,
+                    //     );
+                    //   },
+                    // ),
+                    //VERSION-3
+                    Image.network(
+                      element.imglink,
+                      loadingBuilder: (context, child, event) {
                         if (event == null) {
-                          return widget;
+                          return child;
                         }
-                        double val;
-                        if (null == event.expectedTotalBytes) {
-                          val = 0.0;
-                        } else {
-                          val = event.cumulativeBytesLoaded /
-                              event.expectedTotalBytes;
+                        val = event.cumulativeBytesLoaded /
+                            event.expectedTotalBytes;
+                        if (val == 1) {
+                          return child;
+                        } 
+                        else if (val < 1) {
+                          return Stack(
+                            children: <Widget>[
+                              Image.asset('assets/Loading.gif'),
+                              LinearProgressIndicator(
+                                value: val,
+                                backgroundColor: Colors.white,
+                              )
+                            ],
+                          );
                         }
-                        return LinearProgressIndicator(
-                          backgroundColor: Colors.white,
-                          value: val,
-                        );
                       },
                     ),
 

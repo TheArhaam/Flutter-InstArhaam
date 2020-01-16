@@ -14,6 +14,9 @@
 -Try to implement Hero() widget for InstArhaam logo on login page to Mainfeed [TRIED|NOT WORKING AS EXPECTED|FURTHER RESEARCH REQUIRED]
 -Try to use "Issues" in github instead of creating a temporary ToDo list
 -Limit the card height to make sure it is completely visible on the screen
+-Fix ImageFade, Placeholder remains in the background
+    -If no fix available, set a constraint on the size/the ration of the image (SQUARE/PORTRAIT ONLY ALLOWED)
+    -Or just replace it with FadeInImage and figure out another way for getting loadingBuilder details
 
 COMPLETE:
 -Manage the files to have appropriate classes and functions in their respective files
