@@ -16,6 +16,7 @@ class Wallpaper {
   String userEmail;
   String userName;
   bool liked;
+  double imageHeight;
 
   Wallpaper(File img, Text txt, String owner, String photoUrl, String userEmail,
       String userName) {
@@ -49,6 +50,7 @@ class Wallpaper {
     } else if (imgdetails['Liked by'][this.owner] == null) {
       this.liked = false;
     }
+    this.imageHeight = imgdetails['imageHeight'];
     this.photoUrl = user.dpUrl;
     this.userEmail = user.userEmail;
     this.userName = user.userName;
@@ -59,17 +61,20 @@ class FirebaseWallpaper {
   String imageurl;
   String txt;
   String owner;
+  double imageHeight;
 
-  FirebaseWallpaper(String imageurl, String txt, String owner) {
+  FirebaseWallpaper(String imageurl, String txt, String owner, double imageHeight) {
     this.imageurl = imageurl;
     this.txt = txt;
     this.owner = owner;
+    this.imageHeight = imageHeight;
   }
   getJSON() {
     return {
       'imageurl': '${imageurl}',
       'txt': '${txt}',
       'owner': '${owner}',
+      'imageHeight': '${imageHeight}',
       'Liked by': {'default': 'true'}
     };
   }

@@ -158,6 +158,7 @@ class UploadPageState extends State<UploadPage> {
   }
 
   Future uploadImage(Wallpaper wallpaper, File selectedImageFile) async {
+    var imageHeight = Image.file(selectedImageFile).height; 
     final StorageReference str = FirebaseStorage.instance
         .ref()
         .child('Wallpapers')
@@ -168,7 +169,7 @@ class UploadPageState extends State<UploadPage> {
         await (await uploadTask.onComplete).ref.getDownloadURL();
 
     FirebaseWallpaper fwallpaper =
-        new FirebaseWallpaper(downloadURL, wallpaper.txt.data, wallpaper.owner);
+        new FirebaseWallpaper(downloadURL, wallpaper.txt.data, wallpaper.owner,imageHeight);
     wallpaperdb
         .child(details.userEmail.substring(0, details.userEmail.length - 4))
         .child('Images')

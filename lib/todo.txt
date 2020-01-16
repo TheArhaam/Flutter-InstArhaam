@@ -17,6 +17,9 @@
 -Fix ImageFade, Placeholder remains in the background
     -If no fix available, set a constraint on the size/the ration of the image (SQUARE/PORTRAIT ONLY ALLOWED)
     -Or just replace it with FadeInImage and figure out another way for getting loadingBuilder details
+    -Implemented ConstrainedBox for the image, fix it  
+        -Image switching isn't smooth figure out something
+        -Save the image height to the databse and use it to fix the size of the boxes
 
 COMPLETE:
 -Manage the files to have appropriate classes and functions in their respective files
