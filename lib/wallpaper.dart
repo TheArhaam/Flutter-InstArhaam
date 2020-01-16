@@ -100,6 +100,7 @@ class WallpaperListState extends State<WallpaperListWidget> {
   @override
   Widget build(BuildContext context) {
     final double hsize = MediaQuery.of(context).size.height;
+    final double wsize = MediaQuery.of(context).size.width;
     return Container(
       height: hsize - kBottomNavigationBarHeight - kToolbarHeight - 24,
       child: ListView(
@@ -168,29 +169,42 @@ class WallpaperListState extends State<WallpaperListWidget> {
                     //   },
                     // ),
                     //VERSION-3
-                    Image.network(
-                      element.imglink,
-                      loadingBuilder: (context, child, event) {
-                        if (event == null) {
-                          return child;
-                        }
-                        val = event.cumulativeBytesLoaded /
-                            event.expectedTotalBytes;
-                        if (val == 1) {
-                          return child;
-                        } 
-                        else if (val < 1) {
-                          return Stack(
-                            children: <Widget>[
-                              Image.asset('assets/Loading.gif'),
-                              LinearProgressIndicator(
-                                value: val,
-                                backgroundColor: Colors.white,
-                              )
-                            ],
-                          );
-                        }
-                      },
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                          minHeight: (hsize -
+                                  kToolbarHeight -
+                                  kBottomNavigationBarHeight) *
+                              0.4,
+                          maxHeight: (hsize -
+                                  kToolbarHeight -
+                                  kBottomNavigationBarHeight) *
+                              0.75),
+                      child: Image.network(
+                        element.imglink,
+                        loadingBuilder: (context, child, event) {
+                          if (event == null) {
+                            return Container(
+                              child: child,
+                              width: wsize,
+                            );
+                          }
+                          val = event.cumulativeBytesLoaded /
+                              event.expectedTotalBytes;
+                          if (val == 1) {
+                            return child;
+                          } else if (val < 1) {
+                            return Stack(
+                              children: <Widget>[
+                                Image.asset('assets/Loading.gif'),
+                                LinearProgressIndicator(
+                                  value: val,
+                                  backgroundColor: Colors.white,
+                                )
+                              ],
+                            );
+                          }
+                        },
+                      ),
                     ),
 
                     Row(
