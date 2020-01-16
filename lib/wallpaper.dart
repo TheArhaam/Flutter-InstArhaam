@@ -16,7 +16,7 @@ class Wallpaper {
   String userEmail;
   String userName;
   bool liked;
-  double imageHeight;
+  int imageHeight;
 
   Wallpaper(File img, Text txt, String owner, String photoUrl, String userEmail,
       String userName) {
@@ -50,7 +50,7 @@ class Wallpaper {
     } else if (imgdetails['Liked by'][this.owner] == null) {
       this.liked = false;
     }
-    this.imageHeight = imgdetails['imageHeight'];
+    this.imageHeight = int.parse(imgdetails['imageHeight']);
     this.photoUrl = user.dpUrl;
     this.userEmail = user.userEmail;
     this.userName = user.userName;
@@ -61,9 +61,10 @@ class FirebaseWallpaper {
   String imageurl;
   String txt;
   String owner;
-  double imageHeight;
+  int imageHeight;
 
-  FirebaseWallpaper(String imageurl, String txt, String owner, double imageHeight) {
+  FirebaseWallpaper(
+      String imageurl, String txt, String owner, int imageHeight) {
     this.imageurl = imageurl;
     this.txt = txt;
     this.owner = owner;
@@ -106,6 +107,11 @@ class WallpaperListState extends State<WallpaperListWidget> {
   Widget build(BuildContext context) {
     final double hsize = MediaQuery.of(context).size.height;
     final double wsize = MediaQuery.of(context).size.width;
+    double maxheight =
+        (hsize - kToolbarHeight - kBottomNavigationBarHeight - 24) * 0.75;
+    double minheight =
+        (hsize - kToolbarHeight - kBottomNavigationBarHeight - 24) * 0.4;
+
     return Container(
       height: hsize - kBottomNavigationBarHeight - kToolbarHeight - 24,
       child: ListView(
@@ -115,6 +121,12 @@ class WallpaperListState extends State<WallpaperListWidget> {
               double val = 0.0;
               bool visibility = true;
               bool loadingVisibility = true;
+              if(element.imageHeight<maxheight) {
+                minheight = element.imageHeight.toDouble();
+              }
+              else {
+                minheight = maxheight;
+              }
               return Card(
                 child: Column(
                   children: <Widget>[
@@ -176,14 +188,9 @@ class WallpaperListState extends State<WallpaperListWidget> {
                     //VERSION-3
                     ConstrainedBox(
                       constraints: BoxConstraints(
-                          minHeight: (hsize -
-                                  kToolbarHeight -
-                                  kBottomNavigationBarHeight) *
-                              0.4,
-                          maxHeight: (hsize -
-                                  kToolbarHeight -
-                                  kBottomNavigationBarHeight) *
-                              0.75),
+                        minHeight: minheight,
+                        maxHeight: maxheight,
+                      ),
                       child: Image.network(
                         element.imglink,
                         loadingBuilder: (context, child, event) {
