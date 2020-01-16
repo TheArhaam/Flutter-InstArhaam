@@ -17,6 +17,7 @@ class Wallpaper {
   String userName;
   bool liked;
   int imageHeight;
+  int imageWidth;
 
   Wallpaper(File img, Text txt, String owner, String photoUrl, String userEmail,
       String userName) {
@@ -51,6 +52,7 @@ class Wallpaper {
       this.liked = false;
     }
     this.imageHeight = int.parse(imgdetails['imageHeight']);
+    this.imageWidth = int.parse(imgdetails['imageWidth']);
     this.photoUrl = user.dpUrl;
     this.userEmail = user.userEmail;
     this.userName = user.userName;
@@ -62,13 +64,15 @@ class FirebaseWallpaper {
   String txt;
   String owner;
   int imageHeight;
+  int imageWidth;
 
   FirebaseWallpaper(
-      String imageurl, String txt, String owner, int imageHeight) {
+      String imageurl, String txt, String owner, int imageHeight,int imageWidth) {
     this.imageurl = imageurl;
     this.txt = txt;
     this.owner = owner;
     this.imageHeight = imageHeight;
+    this.imageWidth = imageWidth;
   }
   getJSON() {
     return {
@@ -76,6 +80,7 @@ class FirebaseWallpaper {
       'txt': '${txt}',
       'owner': '${owner}',
       'imageHeight': '${imageHeight}',
+      'imageWidth': '${imageWidth}',
       'Liked by': {'default': 'true'}
     };
   }
@@ -108,7 +113,7 @@ class WallpaperListState extends State<WallpaperListWidget> {
     final double hsize = MediaQuery.of(context).size.height;
     final double wsize = MediaQuery.of(context).size.width;
     double maxheight =
-        (hsize - kToolbarHeight - kBottomNavigationBarHeight - 24) * 0.75;
+        (hsize - kToolbarHeight - kBottomNavigationBarHeight - 24) * 0.8;
     double minheight =
         (hsize - kToolbarHeight - kBottomNavigationBarHeight - 24) * 0.4;
 
@@ -121,10 +126,14 @@ class WallpaperListState extends State<WallpaperListWidget> {
               double val = 0.0;
               bool visibility = true;
               bool loadingVisibility = true;
-              if(element.imageHeight<maxheight) {
-                minheight = element.imageHeight.toDouble();
-              }
-              else {
+
+              //Finding the newheight obtained when image is reduced due to width constraint of card
+              var reqwidth = wsize - 20;
+              var newheight = (element.imageHeight*reqwidth)/element.imageWidth; 
+
+              if (newheight < maxheight) {
+                minheight = newheight;
+              } else {
                 minheight = maxheight;
               }
               return Card(
@@ -189,31 +198,30 @@ class WallpaperListState extends State<WallpaperListWidget> {
                     ConstrainedBox(
                       constraints: BoxConstraints(
                         minHeight: minheight,
-                        maxHeight: maxheight,
+                        maxHeight: minheight,
                       ),
                       child: Image.network(
                         element.imglink,
                         loadingBuilder: (context, child, event) {
                           if (event == null) {
-                            return Container(
-                              child: child,
-                              width: wsize,
-                            );
+                            return child;
                           }
                           val = event.cumulativeBytesLoaded /
                               event.expectedTotalBytes;
                           if (val == 1) {
                             return child;
                           } else if (val < 1) {
-                            return Stack(
-                              children: <Widget>[
-                                Image.asset('assets/Loading.gif'),
-                                LinearProgressIndicator(
-                                  value: val,
-                                  backgroundColor: Colors.white,
-                                )
-                              ],
-                            );
+                            return
+                                // Stack(
+                                //   children: <Widget>[
+                                //     Image.asset('assets/Loading.gif'),
+                                Center(
+                                    child: CircularProgressIndicator(
+                              value: val,
+                              backgroundColor: Colors.white,
+                            ));
+                            //   ],
+                            // );
                           }
                         },
                       ),

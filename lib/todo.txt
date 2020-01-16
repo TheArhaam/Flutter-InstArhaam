@@ -20,6 +20,7 @@
     -Implemented ConstrainedBox for the image, fix it  
         -Image switching isn't smooth figure out something
         -Save the image height to the databse and use it to fix the size of the boxes
+-Images aren't being deleted properly, FIX IT
 
 COMPLETE:
 -Manage the files to have appropriate classes and functions in their respective files

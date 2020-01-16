@@ -21,10 +21,10 @@ class UploadPage extends StatefulWidget {
 
 class UploadPageState extends State<UploadPage> {
   UserDetails details;
-  Image image;
   var wallpaperdb = FirebaseDatabase.instance.reference().child('Wallpapers');
   bool spinnervisibility = false;
   File selectedImageFile;
+  var image;
 
   UploadPageState(UserDetails details) {
     // image = Image.asset('assets/UploadPageDefault.jpg');
@@ -73,12 +73,12 @@ class UploadPageState extends State<UploadPage> {
                   selectedImageFile,
                   height: containerHeight,
                 );
-                if (image == null) {
-                  image = Image.asset(
-                    'assets/UploadPageDefault.jpg',
-                    fit: BoxFit.fitWidth,
-                  );
-                }
+                // if (image == null) {
+                //   image = Image.asset(
+                //     'assets/UploadPageDefault.jpg',
+                //     fit: BoxFit.fitWidth,
+                //   );
+                // }
                 setState(() {});
               },
               child: Row(
@@ -159,11 +159,13 @@ class UploadPageState extends State<UploadPage> {
 
   Future uploadImage(Wallpaper wallpaper, File selectedImageFile) async {
     var imageHeight;
+    var imageWidth;
     Image.file(selectedImageFile)
         .image
         .resolve(ImageConfiguration())
         .addListener(ImageStreamListener((info, val) {
       imageHeight = info.image.height;
+      imageWidth = info.image.width;
     }));
     final StorageReference str = FirebaseStorage.instance
         .ref()
@@ -174,8 +176,8 @@ class UploadPageState extends State<UploadPage> {
     String downloadURL =
         await (await uploadTask.onComplete).ref.getDownloadURL();
 
-    FirebaseWallpaper fwallpaper = new FirebaseWallpaper(
-        downloadURL, wallpaper.txt.data, wallpaper.owner, imageHeight);
+    FirebaseWallpaper fwallpaper = new FirebaseWallpaper(downloadURL,
+        wallpaper.txt.data, wallpaper.owner, imageHeight, imageWidth);
     wallpaperdb
         .child(details.userEmail.substring(0, details.userEmail.length - 4))
         .child('Images')
