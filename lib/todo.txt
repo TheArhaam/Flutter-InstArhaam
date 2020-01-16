@@ -1,7 +1,7 @@
 -Implement Followers and Following
 -Create a bottom navigationbar
-    1.Mainfeed
-    2.UploadImage
+    1.Mainfeed [DONE]
+    2.UploadImage [DONE]
     3.Profile
 -Fix the rerendering of images in the list
 -Modify database to generate uniqueID based on date and use it as the main key for the image
@@ -13,14 +13,18 @@
     -Add more signup options to make the login page less bland 
 -Try to implement Hero() widget for InstArhaam logo on login page to Mainfeed [TRIED|NOT WORKING AS EXPECTED|FURTHER RESEARCH REQUIRED]
 -Try to use "Issues" in github instead of creating a temporary ToDo list
--Limit the card height to make sure it is completely visible on the screen
+
+-Images aren't being deleted properly, FIX IT
+
+
+WORKS BUT COULD WORK BETTER:
 -Fix ImageFade, Placeholder remains in the background
     -If no fix available, set a constraint on the size/the ration of the image (SQUARE/PORTRAIT ONLY ALLOWED)
     -Or just replace it with FadeInImage and figure out another way for getting loadingBuilder details
+    [Above two can only be solved if FadeInImage comes with loadingBuilder]
     -Implemented ConstrainedBox for the image, fix it  
-        -Image switching isn't smooth figure out something
-        -Save the image height to the databse and use it to fix the size of the boxes
--Images aren't being deleted properly, FIX IT
+        -Image switching isn't smooth figure out something [THE ONLY PROBLEM]
+        -Save the image height to the databse and use it to fix the size of the boxes [DONE]
 
 COMPLETE:
 -Manage the files to have appropriate classes and functions in their respective files
@@ -28,3 +32,4 @@ COMPLETE:
 -Appbar title is not in the center, UsersList is pushing it to the right, fix it
 -Use Image.network(loadingBuilder:(){}) for getting the progress of the image download
 -Fix the upload button spinner and other bugs that cause the screen to black out after upload is complete
+-Limit the card height to make sure it is completely visible on the screen
