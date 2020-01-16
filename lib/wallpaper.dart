@@ -5,7 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hello_flutter/userinformation.dart';
 import 'package:image_fade/image_fade.dart';
-import 'package:transparent_image/transparent_image.dart';
+import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 
 class Wallpaper {
   Image img;
@@ -66,8 +66,8 @@ class FirebaseWallpaper {
   int imageHeight;
   int imageWidth;
 
-  FirebaseWallpaper(
-      String imageurl, String txt, String owner, int imageHeight,int imageWidth) {
+  FirebaseWallpaper(String imageurl, String txt, String owner, int imageHeight,
+      int imageWidth) {
     this.imageurl = imageurl;
     this.txt = txt;
     this.owner = owner;
@@ -129,7 +129,8 @@ class WallpaperListState extends State<WallpaperListWidget> {
 
               //Finding the newheight obtained when image is reduced due to width constraint of card
               var reqwidth = wsize - 20;
-              var newheight = (element.imageHeight*reqwidth)/element.imageWidth; 
+              var newheight =
+                  (element.imageHeight * reqwidth) / element.imageWidth;
 
               if (newheight < maxheight) {
                 minheight = newheight;
@@ -195,37 +196,47 @@ class WallpaperListState extends State<WallpaperListWidget> {
                     //   },
                     // ),
                     //VERSION-3
-                    ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: minheight,
-                        maxHeight: minheight,
-                      ),
-                      child: Image.network(
-                        element.imglink,
-                        loadingBuilder: (context, child, event) {
-                          if (event == null) {
-                            return child;
-                          }
-                          val = event.cumulativeBytesLoaded /
-                              event.expectedTotalBytes;
-                          if (val == 1) {
-                            return child;
-                          } else if (val < 1) {
-                            return
-                                // Stack(
-                                //   children: <Widget>[
-                                //     Image.asset('assets/Loading.gif'),
-                                Center(
-                                    child: CircularProgressIndicator(
-                              value: val,
-                              backgroundColor: Colors.white,
-                            ));
-                            //   ],
-                            // );
-                          }
-                        },
-                      ),
-                    ),
+                    Container(
+                        constraints: BoxConstraints(
+                          minHeight: minheight,
+                          maxHeight: minheight,
+                        ),
+                        //Using stack because returning LiquidCircularProgressIndicator()
+                        //Takes up the entire container
+                        //Within stack we can place it anywhere
+                        child: Stack(
+                          children: <Widget>[
+                            Image.network(
+                              element.imglink,
+                              loadingBuilder: (context, child, event) {
+                                if (event == null) {
+                                  return child;
+                                }
+                                val = event.cumulativeBytesLoaded /
+                                    event.expectedTotalBytes;
+                                if (val == 1) {
+                                  return child;
+                                } else if (val < 1) {
+                                  //Using Center to make sure the ProgressIndicator is
+                                  //in the center of the stack
+                                  return Center(
+                                    //Using SizedBox to maintain the size of the ProgressIndicator
+                                          child: SizedBox(
+                                    height: reqwidth * 0.2,
+                                    width: reqwidth * 0.2,
+                                    child: LiquidCircularProgressIndicator(
+                                      borderColor: Colors.white,
+                                      borderWidth: 2,
+                                      direction: Axis.vertical,
+                                      value: val,
+                                      backgroundColor: Colors.white,
+                                    ),
+                                  ));
+                                }
+                              },
+                            ),
+                          ],
+                        )),
 
                     Row(
                       children: <Widget>[
