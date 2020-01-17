@@ -87,25 +87,67 @@ class FirebaseWallpaper {
 }
 
 class WallpaperListWidget extends StatefulWidget {
-  final List<Wallpaper> wallpaperlist;
   final UserDetails details;
-  const WallpaperListWidget(this.wallpaperlist, this.details);
+  const WallpaperListWidget(this.details);
   @override
   State<StatefulWidget> createState() {
-    return WallpaperListState(wallpaperlist, details);
+    return WallpaperListState(details);
   }
 }
 
 class WallpaperListState extends State<WallpaperListWidget> {
-  List<Wallpaper> wallpaperlist;
+  List<UserDisplayDetails> userlist = List();
+  List<Wallpaper> wallpaperlist = List();
   final UserDetails details;
   Icon sicon;
   Icon favicon = Icon(Icons.favorite);
   Icon favbicon = Icon(Icons.favorite_border);
   var wallpaperdb = FirebaseDatabase.instance.reference().child('Wallpapers');
 
-  WallpaperListState(this.wallpaperlist, this.details) {
+  WallpaperListState(this.details) {
     sicon = favbicon;
+    wallpaperdb.onChildAdded.listen(dbadd);
+    wallpaperdb.onChildChanged.listen(dbremove);
+  }
+
+  dbadd(Event event) {
+    //For userlist
+    var user = new UserDisplayDetails.fromJSON(event.snapshot.value);
+    userlist.add(user);
+    setState(() {});
+    //For wallpaperlist
+    var userdb = FirebaseDatabase.instance
+        .reference()
+        .child('Wallpapers')
+        .child(user.userEmail.substring(0, user.userEmail.length - 4))
+        .child('Images');
+    userdb.onChildAdded.listen((Event uevent) {
+      var wallp = new Wallpaper.fromJSON(uevent.snapshot.value, user);
+      wallpaperlist.add(wallp);
+      setState(() {});
+    });
+  }
+
+  dbremove(Event event) {
+    print('Called');
+    var user = new UserDisplayDetails.fromJSON(event.snapshot.value);
+    var userdb = FirebaseDatabase.instance
+        .reference()
+        .child('Wallpapers')
+        .child(user.userEmail.substring(0, user.userEmail.length - 4))
+        .child('Images');
+    userdb.onChildRemoved.listen((Event uevent) {
+      print('Reached');
+      wallpaperlist.removeWhere((w) {
+        if (w.txt == (new Wallpaper.fromJSON(event.snapshot.value, user).txt)) {
+          print(w.txt);
+          return true;
+        }
+        return false;
+      });
+      print(wallpaperlist);
+    });
+    setState(() {});
   }
 
   @override
@@ -220,8 +262,8 @@ class WallpaperListState extends State<WallpaperListWidget> {
                                   //Using Center to make sure the ProgressIndicator is
                                   //in the center of the stack
                                   return Center(
-                                    //Using SizedBox to maintain the size of the ProgressIndicator
-                                          child: SizedBox(
+                                      //Using SizedBox to maintain the size of the ProgressIndicator
+                                      child: SizedBox(
                                     height: reqwidth * 0.2,
                                     width: reqwidth * 0.2,
                                     child: LiquidCircularProgressIndicator(
@@ -280,20 +322,20 @@ class WallpaperListState extends State<WallpaperListWidget> {
                               data: Theme.of(context)
                                   .copyWith(cardColor: Color(0xFF484848)),
                               child: PopupMenuButton(
-                                onSelected: (var choice) {
+                                onSelected: (var choice) async {
                                   if (choice == 'Delete') {
-                                    wallpaperdb
-                                        .child(element.owner)
-                                        .child('Images')
-                                        .child(element.txt.data)
-                                        .remove();
-
-                                    FirebaseStorage.instance
+                                    await FirebaseStorage.instance
                                         .ref()
                                         .child('Wallpapers')
                                         .child(element.owner)
                                         .child(element.txt.data)
                                         .delete();
+
+                                    await wallpaperdb
+                                        .child(element.owner)
+                                        .child('Images')
+                                        .child(element.txt.data)
+                                        .remove();
 
                                     wallpaperlist.remove(element);
                                     setState(() {});

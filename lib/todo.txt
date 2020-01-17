@@ -13,9 +13,10 @@
     -Add more signup options to make the login page less bland 
 -Try to implement Hero() widget for InstArhaam logo on login page to Mainfeed [TRIED|NOT WORKING AS EXPECTED|FURTHER RESEARCH REQUIRED]
 -Try to use "Issues" in github instead of creating a temporary ToDo list
-
--Images aren't being deleted properly, FIX IT
-
+-Only owner should have the ability to delete photos
+-Images don't immediately get deleted from other users devices [THIS IS BECAUSE IT WOULD BE IMPOSSIBLE TO KEEP TRACK OF EVERY SINGLE IMAGE, 
+IT GETS DELETED WHEN THE PAGE IS REFRESHED AND FOR NOW THATS THE BEST I CAN DO]
+-SEPARATE WALLPAPER CLASS FROM WallpaperListWidget
 
 WORKS BUT COULD WORK BETTER:
 -Fix ImageFade, Placeholder remains in the background
@@ -33,3 +34,5 @@ COMPLETE:
 -Use Image.network(loadingBuilder:(){}) for getting the progress of the image download
 -Fix the upload button spinner and other bugs that cause the screen to black out after upload is complete
 -Limit the card height to make sure it is completely visible on the screen
+-Images aren't being deleted properly, FIX IT
+-Move wallpaperlist to wallpaper.dart, don't leave anything in wallpapermanagement

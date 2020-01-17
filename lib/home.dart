@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hello_flutter/uploadpage.dart';
 import 'package:hello_flutter/userinformation.dart';
 import 'package:hello_flutter/userlist.dart';
+import 'package:hello_flutter/wallpaper.dart';
 import 'package:hello_flutter/wallpapermanagement.dart';
 
 class HomePage extends StatefulWidget {
@@ -43,7 +44,7 @@ class HomePageState extends State<HomePage> {
 
   HomePageState(UserDetails details) {
     this.details = details;
-    pages = [Management(details), UploadPage(details)];
+    pages = [WallpaperListWidget(details), UploadPage(details)];
   }
 
   @override
