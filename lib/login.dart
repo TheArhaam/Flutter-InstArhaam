@@ -7,7 +7,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hello_flutter/userinformation.dart';
 import 'package:hello_flutter/home.dart';
-import 'package:flutter/services.dart';
 
 //CREATES LoginPageState
 class LoginPage extends StatefulWidget {

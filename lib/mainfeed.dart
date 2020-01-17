@@ -1,125 +1,298 @@
-// import 'package:firebase_database/firebase_database.dart';
-// import 'package:flutter/material.dart';
-// import 'package:hello_flutter/userinformation.dart';
-// import 'package:hello_flutter/wallpaper.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:hello_flutter/userinformation.dart';
+import 'package:hello_flutter/wallpaper.dart';
+import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 
-// class MainFeed extends StatefulWidget {
-//   final UserDetails details;
+class MainFeed extends StatefulWidget {
+  final UserDetails details;
+  const MainFeed(this.details);
+  @override
+  State<StatefulWidget> createState() {
+    return MainFeedState(details);
+  }
+}
 
-//   const MainFeed(this.details);
+class MainFeedState extends State<MainFeed> {
+  List<UserDisplayDetails> userlist = List();
+  List<Wallpaper> wallpaperlist = List();
+  final UserDetails details;
+  Icon sicon;
+  Icon favicon = Icon(Icons.favorite);
+  Icon favbicon = Icon(Icons.favorite_border);
+  var wallpaperdb = FirebaseDatabase.instance.reference().child('Wallpapers');
 
-//   @override
-//   State<StatefulWidget> createState() {
-//     return MainFeedState(details);
-//   }
-// }
+  MainFeedState(this.details) {
+    sicon = favbicon;
+    wallpaperdb.onChildAdded.listen(dbadd);
+    wallpaperdb.onChildChanged.listen(dbremove);
+  }
 
-// class MainFeedState extends State<MainFeed> {
-//   List<UserDisplayDetails> userlist = List();
-//   final UserDetails details;
-//   int count = 0;
-//   List<Wallpaper> wallpaperlist = List();
-//   String tempurl = '',
-//       temptxt = '',
-//       tempowner = '',
-//       tempdpurl = '',
-//       tempemail = '',
-//       tempuname = '';
-//   bool templiked = false;
-//   var wallpaperdb = FirebaseDatabase.instance.reference().child('Wallpapers');
+  dbadd(Event event) {
+    //For userlist
+    var user = new UserDisplayDetails.fromJSON(event.snapshot.value);
+    userlist.add(user);
+    setState(() {});
+    //For wallpaperlist
+    var userdb = FirebaseDatabase.instance
+        .reference()
+        .child('Wallpapers')
+        .child(user.userEmail.substring(0, user.userEmail.length - 4))
+        .child('Images');
+    userdb.onChildAdded.listen((Event uevent) {
+      var wallp = new Wallpaper.fromJSON(uevent.snapshot.value, user);
+      wallpaperlist.add(wallp);
+      setState(() {});
+    });
+  }
 
-//   MainFeedState(this.details) {
-//     initWallpapers();
-//     initUsers();
-//   }
+  dbremove(Event event) {
+    print('Called');
+    var user = new UserDisplayDetails.fromJSON(event.snapshot.value);
+    var userdb = FirebaseDatabase.instance
+        .reference()
+        .child('Wallpapers')
+        .child(user.userEmail.substring(0, user.userEmail.length - 4))
+        .child('Images');
+    userdb.onChildRemoved.listen((Event uevent) {
+      print('Reached');
+      wallpaperlist.removeWhere((w) {
+        if (w.txt == (new Wallpaper.fromJSON(event.snapshot.value, user).txt)) {
+          print(w.txt);
+          return true;
+        }
+        return false;
+      });
+      print(wallpaperlist);
+    });
+    setState(() {});
+  }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return WallpaperListWidget(wallpaperlist, details);
-//   }
+  @override
+  Widget build(BuildContext context) {
+    final double hsize = MediaQuery.of(context).size.height;
+    final double wsize = MediaQuery.of(context).size.width;
+    double maxheight =
+        (hsize - kToolbarHeight - kBottomNavigationBarHeight - 24) * 0.8;
+    double minheight =
+        (hsize - kToolbarHeight - kBottomNavigationBarHeight - 24) * 0.4;
 
-// //For initializing the wallpaper list from the Database
-//   initWallpapers() {
-//     String
-//         currentUser; //Cut email of the user whose images are currently being added to the wallpaperlist
+    return Container(
+      height: hsize - kBottomNavigationBarHeight - kToolbarHeight - 24,
+      child: ListView(
+          addAutomaticKeepAlives: true,
+          children: wallpaperlist.map(
+            (element) {
+              double val = 0.0;
+              bool visibility = true;
+              bool loadingVisibility = true;
 
-//     wallpaperdb.once().then((ds) {
-//       Map emailds = ds.value; //DataSnapchat at the Cut email
-//       emailds.forEach((key, value) {
-//         currentUser = key.toString(); //Setting the current user
+              //Finding the newheight obtained when image is reduced due to width constraint of card
+              var reqwidth = wsize - 20;
+              var newheight =
+                  (element.imageHeight * reqwidth) / element.imageWidth;
 
-//         Map imagesds =
-//             value; //DataSnapshot at the Images child of the current user
-//         imagesds.forEach((key, value) {
-//           if (key.toString() == 'Images') {
-//             Map elementsds = value;
-//             elementsds.forEach((key, value) {
-//               Map detailsds = value;
-//               detailsds.forEach((key, value) {
-//                 if (key.toString() == 'imageurl') {
-//                   tempurl = value.toString();
-//                 } else if (key.toString() == 'txt') {
-//                   temptxt = value.toString();
-//                 } else if (key.toString() == 'owner') {
-//                   tempowner = value.toString();
-//                 } else if (key.toString() == 'Liked by') {
-//                   Map likedds = value;
-//                   if (likedds.containsKey(details.userEmail
-//                       .substring(0, details.userEmail.length - 4))) {
-//                     //CHECKING IF THE LOGGED IN USER LIKED THIS IMAGE, DO NOT CHANGE ITS CORRECT
-//                     templiked = true;
-//                   } else {
-//                     templiked = false;
-//                   }
-//                 }
-//               });
-//               wallpaperlist.add(new Wallpaper.ifImage(
-//                   Image.network(
-//                     tempurl,
-//                   ),
-//                   Text(temptxt),
-//                   tempowner,
-//                   templiked,
-//                   userlist[count].dpUrl,
-//                   userlist[count].userEmail,
-//                   userlist[count].userName));
+              if (newheight < maxheight) {
+                minheight = newheight;
+              } else {
+                minheight = maxheight;
+              }
+              return Card(
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.all(10),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              element.photoUrl,
+                              height: 30,
+                            ),
+                            //THIS DISPLAYS THE LOGGED IN USERS INFO
+                            //CHANGE IT AND SAVE THE OWNER INFO ON FIREBASE AS WELL
+                          ),
+                        ),
+                        Text(element.userName,
+                            style: TextStyle(color: Colors.white))
+                      ],
+                    ),
+                    //IMAGE
+                    //For implementing progressbar along with FadeInImage
+                    //FadInImage doesnt provide 'loadingBuilder'
+                    //ImageFade adds 'loadingBuilder' and other features on top of FadeInImage
+                    //VERSION-1
+                    // Stack(
+                    //   children: <Widget>[
+                    //     Center(child: CircularProgressIndicator()),
+                    //     Center(
+                    //       child: FadeInImage.memoryNetwork(
+                    //         placeholder: kTransparentImage,
+                    //         image: element.imglink,
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    //VERSION-2
+                    // ImageFade(
+                    //   image: NetworkImage(element.imglink),
+                    //   placeholder: Image.asset('assets/Loading.gif'),
+                    //   loadingBuilder: (context, widget, event) {
+                    //     if (event == null) {
+                    //       return widget;
+                    //     }
+                    //     double val;
+                    //     if (null == event.expectedTotalBytes) {
+                    //       val = 0.0;
+                    //     } else {
+                    //       val = event.cumulativeBytesLoaded /
+                    //           event.expectedTotalBytes;
+                    //     }
+                    //     return LinearProgressIndicator(
+                    //       backgroundColor: Colors.white,
+                    //       value: val,
+                    //     );
+                    //   },
+                    // ),
+                    //VERSION-3
+                    Container(
+                        constraints: BoxConstraints(
+                          minHeight: minheight,
+                          maxHeight: minheight,
+                        ),
+                        //Using stack because returning LiquidCircularProgressIndicator()
+                        //Takes up the entire container
+                        //Within stack we can place it anywhere
+                        child: Stack(
+                          children: <Widget>[
+                            Image.network(
+                              element.imglink,
+                              loadingBuilder: (context, child, event) {
+                                if (event == null) {
+                                  return child;
+                                }
+                                val = event.cumulativeBytesLoaded /
+                                    event.expectedTotalBytes;
+                                if (val == 1) {
+                                  return child;
+                                } else if (val < 1) {
+                                  //Using Center to make sure the ProgressIndicator is
+                                  //in the center of the stack
+                                  return Center(
+                                      //Using SizedBox to maintain the size of the ProgressIndicator
+                                      child: SizedBox(
+                                    height: reqwidth * 0.2,
+                                    width: reqwidth * 0.2,
+                                    child: LiquidCircularProgressIndicator(
+                                      borderColor: Colors.white,
+                                      borderWidth: 2,
+                                      direction: Axis.vertical,
+                                      value: val,
+                                      backgroundColor: Colors.white,
+                                    ),
+                                  ));
+                                }
+                              },
+                            ),
+                          ],
+                        )),
 
-//               templiked = false;
-//               //THE ABOVE IMPLEMENTATION IS FOR EVERY SINGLE IMAGE IN THE DATABASE OF ALL USERS
-//               //START THE IMPLEMENTATION OF FOLLOWERS AND FOLLOWING TO DISPLAY ONLY LOGGEDIN USERS IMAGES AND THE FOLLOWING USERS IMAGES
-//               //WILL PROBABLY HAVE TO CREATE A CLASS TO STORE THE OWNER AND COUNT SO WE CAN DYNAMICALLY ACCESS THE COUNT FOR DESIRED USERS
-//             });
-//           }
-//         });
-//         count++;
-//       });
-//       setState(() {});
-//     });
-//   }
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                            child: Padding(
+                                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                                child: Text(element.txt.data,
+                                    style: TextStyle(color: Colors.white)))),
+                        Row(
+                          children: <Widget>[
+                            IconButton(
+                              splashColor: Colors.white,
+                              icon: checkFav(element),
+                              onPressed: () {
+                                setState(() {
+                                  if (element.liked == false) {
+                                    element.liked = true;
+                                    wallpaperdb
+                                        .child(element.owner)
+                                        .child('Images')
+                                        .child(element.txt.data)
+                                        .child('Liked by')
+                                        .child(details.userEmail.substring(
+                                            0, details.userEmail.length - 4))
+                                        .set(true);
+                                  } else if (element.liked == true) {
+                                    element.liked = false;
+                                    wallpaperdb
+                                        .child(element.owner)
+                                        .child('Images')
+                                        .child(element.txt.data)
+                                        .child('Liked by')
+                                        .child(details.userEmail.substring(
+                                            0, details.userEmail.length - 4))
+                                        .remove();
+                                  }
+                                });
+                              },
+                            ),
+                            Theme(
+                              data: Theme.of(context)
+                                  .copyWith(cardColor: Color(0xFF484848)),
+                              child: PopupMenuButton(
+                                onSelected: (var choice) async {
+                                  if (choice == 'Delete') {
+                                    await FirebaseStorage.instance
+                                        .ref()
+                                        .child('Wallpapers')
+                                        .child(element.owner)
+                                        .child(element.txt.data)
+                                        .delete();
 
-//   initUsers() {
-//     wallpaperdb.once().then((ds) {
-//       Map emailsds = ds.value;
-//       emailsds.forEach((key, value) async {
-//         // tempemail = key.toString();
-//         Map udds = value;
-//         udds.forEach((key, value) {
-//           if (key.toString() == 'UserDetails') {
-//             // tempdpurl = value;
-//             Map detailsds = value;
-//             detailsds.forEach((key, value) {
-//               if (key.toString() == 'photoUrl') {
-//                 tempdpurl = value;
-//               } else if (key.toString() == 'userEmail') {
-//                 tempemail = value;
-//               } else if (key.toString() == 'userName') {
-//                 tempuname = value;
-//               }
-//             });
-//           }
-//         });
-//         userlist.add(UserDisplayDetails(tempdpurl, tempemail, tempuname));
-//       });
-//     });
-//   }
-// }
+                                    await wallpaperdb
+                                        .child(element.owner)
+                                        .child('Images')
+                                        .child(element.txt.data)
+                                        .remove();
+
+                                    wallpaperlist.remove(element);
+                                    setState(() {});
+                                  }
+                                },
+                                icon: Icon(Icons.menu),
+                                itemBuilder: (BuildContext context) {
+                                  return <PopupMenuItem>[
+                                    PopupMenuItem(
+                                      value: 'Delete',
+                                      child: Text(
+                                        'Delete',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    )
+                                  ];
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ).toList()),
+    );
+  }
+
+  Widget checkFav(var element) {
+    if (element.liked == true) {
+      return favicon;
+    } else {
+      return favbicon;
+    }
+  }
+}

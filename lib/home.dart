@@ -1,13 +1,13 @@
 //THIS FILE CONTAINS THE HOMEPAGE (THE PAGE DISPLAYED AFTER LOGIN)
+//APPBAR AND BOTTOMNAVIGATIONBAR IMPLEMENTED HERE
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hello_flutter/mainfeed.dart';
 import 'package:hello_flutter/uploadpage.dart';
 import 'package:hello_flutter/userinformation.dart';
 import 'package:hello_flutter/userlist.dart';
-import 'package:hello_flutter/wallpaper.dart';
-import 'package:hello_flutter/wallpapermanagement.dart';
 
 class HomePage extends StatefulWidget {
   UserDetails details;
@@ -44,7 +44,7 @@ class HomePageState extends State<HomePage> {
 
   HomePageState(UserDetails details) {
     this.details = details;
-    pages = [WallpaperListWidget(details), UploadPage(details)];
+    pages = [MainFeed(details), UploadPage(details)];
   }
 
   @override
