@@ -24,7 +24,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   UserDetails details;
   List<Widget> pages;
-  int bottomSelectedIndex = 0;
+  int bottomSelectedIndex = 1;
 
   //For generating the items for BottomNavigationBar
   List<BottomNavigationBarItem> buildBottomNavBarItems() {
@@ -41,7 +41,7 @@ class HomePageState extends State<HomePage> {
 
   //For the PageView
   PageController pageController = PageController(
-    initialPage: 0,
+    initialPage: 1,
     keepPage: true,
   );
 

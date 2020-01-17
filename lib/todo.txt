@@ -1,8 +1,5 @@
 -Implement Followers and Following
--Create a bottom navigationbar
-    1.Mainfeed [DONE]
-    2.UploadImage [DONE]
-    3.Profile
+
 -Fix the rerendering of images in the list
 -Modify database to generate uniqueID based on date and use it as the main key for the image
 -Make sure newest Images show up on top (in Database)
@@ -18,6 +15,7 @@
 IT GETS DELETED WHEN THE PAGE IS REFRESHED AND FOR NOW THATS THE BEST I CAN DO]
 -Implement a circular bottomnavigationbar
 -Implement some sort of GlobalVariables instead of passing user details between classes
+-UserDetails should be stored from google only once, then user should have the ability to change it 
 
 WORKS BUT COULD WORK BETTER:
 -Fix ImageFade, Placeholder remains in the background
@@ -38,3 +36,7 @@ COMPLETE:
 -Images aren't being deleted properly, FIX IT
 -Move wallpaperlist to wallpaper.dart, don't leave anything in wallpapermanagement
 -SEPARATE WALLPAPER CLASS FROM WallpaperListWidget [DONE | MOVED IT TO mainfeed.dart and changed the class name to MainFeed]
+-Create a bottom navigationbar
+    1.Mainfeed [DONE]
+    2.UploadImage [DONE]
+    3.Profile [IN PROGRESS]
