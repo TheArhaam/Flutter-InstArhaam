@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hello_flutter/mainfeed.dart';
+import 'package:hello_flutter/profile.dart';
 import 'package:hello_flutter/uploadpage.dart';
 import 'package:hello_flutter/userinformation.dart';
 import 'package:hello_flutter/userlist.dart';
@@ -30,9 +31,11 @@ class HomePageState extends State<HomePage> {
     return [
       //FEED
       BottomNavigationBarItem(icon: Icon(Icons.filter), title: Text('FEED')),
+      //PROFILE
+      BottomNavigationBarItem(icon: Icon(Icons.person), title: Text('PROFILE')),
       //UPLOAD
       BottomNavigationBarItem(
-          icon: Icon(Icons.add_a_photo), title: Text('UPLOAD'))
+          icon: Icon(Icons.add_a_photo), title: Text('UPLOAD')),
     ];
   }
 
@@ -44,7 +47,11 @@ class HomePageState extends State<HomePage> {
 
   HomePageState(UserDetails details) {
     this.details = details;
-    pages = [MainFeed(details), UploadPage(details)];
+    pages = [
+      MainFeed(details),
+      ProfilePage(details),
+      UploadPage(details),
+    ];
   }
 
   @override
