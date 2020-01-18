@@ -9,7 +9,9 @@
 </p>
 <hr>
 <p align="center">
-  <img src="screenshots/demo.gif" width="300">
+  <b>OUTDATED</b> 
+  <br>(Will be uploading newer version soon)
+  <br><img src="screenshots/demo.gif" width="300">
 </p>
 <hr>
 <table>
