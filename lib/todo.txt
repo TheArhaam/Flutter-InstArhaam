@@ -15,7 +15,9 @@
 IT GETS DELETED WHEN THE PAGE IS REFRESHED AND FOR NOW THATS THE BEST I CAN DO]
 -Implement a circular bottomnavigationbar
 -Implement some sort of GlobalVariables instead of passing user details between classes
--UserDetails should be stored from google only once, then user should have the ability to change it 
+-UserDetails should be stored from google only once, then user should have the ability to change it [HALF COMPLETE | EDIT NEEDS TO BE ADDED]
+-UserDetails should have a listener on it in profilepage so it can be updated whenever values are changed
+-Improve the way dp loads
 
 WORKS BUT COULD WORK BETTER:
 -Fix ImageFade, Placeholder remains in the background

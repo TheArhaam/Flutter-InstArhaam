@@ -100,7 +100,7 @@ class ProfileDetailsCardState extends State<ProfileDetailsCard> {
                               style: textStyle2,
                             ),
                             Text(
-                              '0',
+                              details.posts.toString(),
                               style: textStyle2,
                             )
                           ],
@@ -125,7 +125,7 @@ class ProfileDetailsCardState extends State<ProfileDetailsCard> {
                               style: textStyle2,
                             ),
                             Text(
-                              '0',
+                              details.followers.toString(),
                               style: textStyle2,
                             )
                           ],
@@ -150,7 +150,7 @@ class ProfileDetailsCardState extends State<ProfileDetailsCard> {
                               style: textStyle2,
                             ),
                             Text(
-                              '0',
+                              details.following.toString(),
                               style: textStyle2,
                             )
                           ],

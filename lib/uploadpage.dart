@@ -158,6 +158,8 @@ class UploadPageState extends State<UploadPage> {
   }
 
   Future uploadImage(Wallpaper wallpaper, File selectedImageFile) async {
+    
+    //GETTING IMAGE HEIGHT & WIDTH
     var imageHeight;
     var imageWidth;
     Image.file(selectedImageFile)
@@ -167,6 +169,8 @@ class UploadPageState extends State<UploadPage> {
       imageHeight = info.image.height;
       imageWidth = info.image.width;
     }));
+
+    //UPLOADING IMAGE TO FIREBASE STORAGE
     final StorageReference str = FirebaseStorage.instance
         .ref()
         .child('Wallpapers')
@@ -176,13 +180,31 @@ class UploadPageState extends State<UploadPage> {
     String downloadURL =
         await (await uploadTask.onComplete).ref.getDownloadURL();
 
+    //ADDING IMAGE TO REALTIMEDATABASE
     FirebaseWallpaper fwallpaper = new FirebaseWallpaper(downloadURL,
         wallpaper.txt.data, wallpaper.owner, imageHeight, imageWidth);
-    wallpaperdb
+    await wallpaperdb
         .child(details.userEmail.substring(0, details.userEmail.length - 4))
         .child('Images')
         .child(fwallpaper.txt)
         .set(fwallpaper.getJSON());
+    
+    //INCREMENTING POSTS
+    var posts;
+    await wallpaperdb
+        .child(details.userEmail.substring(0, details.userEmail.length - 4))
+        .child('UserDetails')
+        .child('posts')
+        .once()
+        .then((snapshot) {
+      posts = int.parse(snapshot.value);
+    });
+    posts++;
+    await wallpaperdb
+        .child(details.userEmail.substring(0, details.userEmail.length - 4))
+        .child('UserDetails')
+        .child('posts')
+        .set(posts.toString());
     return;
   }
 }

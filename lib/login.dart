@@ -74,24 +74,35 @@ class LoginHome extends StatelessWidget {
 
     //Checking if UserDetails are already present in the database
     var exists = false;
-
-    await wallpaperdb.once().then((snapshot){
+    await wallpaperdb.once().then((snapshot) {
       Map users = snapshot.value;
-      users.forEach((key,value){
-        if(key.toString()==details.userEmail.substring(0, details.userEmail.length - 4)) {
-          print('EXISTS');
-          exists = true;
-        }
-      });
+      if (users != null) {
+        users.forEach((key, value) {
+          if (key.toString() ==
+              details.userEmail.substring(0, details.userEmail.length - 4)) {
+            // print('EXISTS');
+            exists = true;
+          }
+        });
+      }
     });
 
     if (!exists) {
-      print('DOES NOT EXIST');
+      // print('DOES NOT EXIST');
       //Adding the LoggedInUser to the database
       wallpaperdb
           .child(details.userEmail.substring(0, details.userEmail.length - 4))
           .child('UserDetails')
           .set(details.getJson());
+    } 
+    else if (exists) {
+      details = UserDetails.fromJSON(await wallpaperdb
+          .child(details.userEmail.substring(0, details.userEmail.length - 4))
+          .child('UserDetails')
+          .once()
+          .then((snapshot) {
+        return snapshot.value;
+      }));
     }
 
     //Once LogIn is complete, LoggedInUser is navigated to MyApp()
