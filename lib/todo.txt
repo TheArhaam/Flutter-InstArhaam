@@ -18,6 +18,7 @@ IT GETS DELETED WHEN THE PAGE IS REFRESHED AND FOR NOW THATS THE BEST I CAN DO]
 -UserDetails should be stored from google only once, then user should have the ability to change it [HALF COMPLETE | EDIT NEEDS TO BE ADDED]
 -UserDetails should have a listener on it in profilepage so it can be updated whenever values are changed
 -Improve the way dp loads
+-Popup image when you slect an image from the profile
 
 
 BIG UPGRADES:

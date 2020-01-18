@@ -38,22 +38,29 @@ class ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     final double hsize = MediaQuery.of(context).size.height;
     final double wsize = MediaQuery.of(context).size.width;
-    double pageSize = (hsize-kToolbarHeight-kBottomNavigationBarHeight-24);
-    double cardHeight = (pageSize*0.3)+45+10;
+    double pageSize =
+        (hsize - kToolbarHeight - kBottomNavigationBarHeight - 24);
+    double cardHeight = (pageSize * 0.3) + 45 + 10;
+    double itemHeight = pageSize / 2.5;
+    double itemWidth = (wsize - 10) / 2;
     return Column(
       children: <Widget>[
         ProfileDetailsCard(details),
         Container(
-          height: pageSize-cardHeight,
+          height: pageSize - cardHeight,
           child: GridView.count(
-            shrinkWrap: true,
+            // shrinkWrap: true,
+            childAspectRatio: (itemHeight / itemWidth),
             crossAxisCount: 2,
             children: profileWallpaperList.map((element) {
               return Card(
-                child: Column(
-                  children: <Widget>[Image.network(element.imglink)],
+                  child: Padding(
+                    padding: EdgeInsets.all(5),
+                child: Image.network(
+                  element.imglink,
+                  fit: BoxFit.cover,
                 ),
-              );
+              ));
             }).toList(),
           ),
         ),
