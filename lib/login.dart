@@ -72,11 +72,27 @@ class LoginHome extends StatelessWidget {
 
     var wallpaperdb = FirebaseDatabase.instance.reference().child('Wallpapers');
 
-    //Adding the LoggedInUser to the database
-    wallpaperdb
-        .child(details.userEmail.substring(0, details.userEmail.length - 4))
-        .child('UserDetails')
-        .set(details.getJson());
+    //Checking if UserDetails are already present in the database
+    var exists = false;
+
+    await wallpaperdb.once().then((snapshot){
+      Map users = snapshot.value;
+      users.forEach((key,value){
+        if(key.toString()==details.userEmail.substring(0, details.userEmail.length - 4)) {
+          print('EXISTS');
+          exists = true;
+        }
+      });
+    });
+
+    if (!exists) {
+      print('DOES NOT EXIST');
+      //Adding the LoggedInUser to the database
+      wallpaperdb
+          .child(details.userEmail.substring(0, details.userEmail.length - 4))
+          .child('UserDetails')
+          .set(details.getJson());
+    }
 
     //Once LogIn is complete, LoggedInUser is navigated to MyApp()
     Navigator.push(
@@ -117,25 +133,25 @@ class LoginHome extends StatelessWidget {
 
           //Row is used as a container for the RaisedButton, it keeps it wrapped to content and centralized
           Padding(
-            padding: EdgeInsets.all(10),
-            child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              //RaisedButton for GoogleSignIn
-              RaisedButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0)),
-                child: Row(children: <Widget>[
-                  //Google Icon from the 'font_awesome_flutter' package
-                  Icon(FontAwesomeIcons.google, size: 20.0),
-                  //Sign in Text
-                  Text('  Sign in with Google'),
-                ]),
-                //Pressing the button calls _signIn()
-                onPressed: () => _signIn(context),
-              )
-            ],
-          ))
+              padding: EdgeInsets.all(10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  //RaisedButton for GoogleSignIn
+                  RaisedButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0)),
+                    child: Row(children: <Widget>[
+                      //Google Icon from the 'font_awesome_flutter' package
+                      Icon(FontAwesomeIcons.google, size: 20.0),
+                      //Sign in Text
+                      Text('  Sign in with Google'),
+                    ]),
+                    //Pressing the button calls _signIn()
+                    onPressed: () => _signIn(context),
+                  )
+                ],
+              ))
         ],
       ),
     );
