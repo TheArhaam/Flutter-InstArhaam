@@ -1,5 +1,7 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hello_flutter/userinformation.dart';
+import 'package:hello_flutter/wallpaper.dart';
 
 class ProfilePage extends StatefulWidget {
   UserDetails details;
@@ -12,11 +14,50 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
   UserDetails details;
-  ProfilePageState(this.details);
+  List<Wallpaper> profileWallpaperList = List();
+  var profilewallpaperdb;
+
+  ProfilePageState(this.details) {
+    profilewallpaperdb = FirebaseDatabase.instance
+        .reference()
+        .child('Wallpapers')
+        .child(details.userEmail.substring(0, details.userEmail.length - 4))
+        .child('Images');
+    profilewallpaperdb.onChildAdded.listen(dbadd);
+  }
+
+  dbadd(Event event) {
+    UserDisplayDetails user = UserDisplayDetails(
+        details.photoUrl, details.userEmail, details.userName);
+    var wallp = new Wallpaper.fromJSON(event.snapshot.value, user);
+    profileWallpaperList.add(wallp);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: <Widget>[ProfileDetailsCard(details)],
+    final double hsize = MediaQuery.of(context).size.height;
+    final double wsize = MediaQuery.of(context).size.width;
+    double pageSize = (hsize-kToolbarHeight-kBottomNavigationBarHeight-24);
+    double cardHeight = (pageSize*0.3)+45+10;
+    return Column(
+      children: <Widget>[
+        ProfileDetailsCard(details),
+        Container(
+          height: pageSize-cardHeight,
+          child: GridView.count(
+            shrinkWrap: true,
+            crossAxisCount: 2,
+            children: profileWallpaperList.map((element) {
+              return Card(
+                child: Column(
+                  children: <Widget>[Image.network(element.imglink)],
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
     );
   }
 }
