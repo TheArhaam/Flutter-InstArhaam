@@ -87,6 +87,14 @@ class MainFeedState extends State<MainFeed> {
               double val = 0.0;
               bool visibility = true;
               bool loadingVisibility = true;
+              bool deleteEnabled = false;
+
+              //Checking if user is the owner of the image
+              if (details.userEmail
+                      .substring(0, details.userEmail.length - 4) ==
+                  element.owner) {
+                deleteEnabled = true;
+              }
 
               //Finding the newheight obtained when image is reduced due to width constraint of card
               var reqwidth = wsize - 20;
@@ -241,6 +249,7 @@ class MainFeedState extends State<MainFeed> {
                               data: Theme.of(context)
                                   .copyWith(cardColor: Color(0xFF484848)),
                               child: PopupMenuButton(
+                                enabled: deleteEnabled,
                                 onSelected: (var choice) async {
                                   if (choice == 'Delete') {
                                     await FirebaseStorage.instance
@@ -257,6 +266,26 @@ class MainFeedState extends State<MainFeed> {
                                         .remove();
 
                                     wallpaperlist.remove(element);
+
+                                    //DECREMENTING POSTS
+                                    var posts;
+                                    await wallpaperdb
+                                        .child(details.userEmail.substring(
+                                            0, details.userEmail.length - 4))
+                                        .child('UserDetails')
+                                        .child('posts')
+                                        .once()
+                                        .then((snapshot) {
+                                      posts = int.parse(snapshot.value);
+                                    });
+                                    posts--;
+                                    await wallpaperdb
+                                        .child(details.userEmail.substring(
+                                            0, details.userEmail.length - 4))
+                                        .child('UserDetails')
+                                        .child('posts')
+                                        .set(posts.toString());
+
                                     setState(() {});
                                   }
                                 },

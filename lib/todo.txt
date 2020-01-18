@@ -19,6 +19,15 @@ IT GETS DELETED WHEN THE PAGE IS REFRESHED AND FOR NOW THATS THE BEST I CAN DO]
 -UserDetails should have a listener on it in profilepage so it can be updated whenever values are changed
 -Improve the way dp loads
 
+
+BIG UPGRADES:
+-Write firebase functions for updating number of posts, followers and Following
+-Updgrade the entire database   
+    -Store Users separately with a unique uniqueID
+    -Store images separately using that uniqueID
+    -Add followers & following to each User (It should contain Unique IDs)
+    
+
 WORKS BUT COULD WORK BETTER:
 -Fix ImageFade, Placeholder remains in the background
     -If no fix available, set a constraint on the size/the ration of the image (SQUARE/PORTRAIT ONLY ALLOWED)
@@ -42,3 +51,4 @@ COMPLETE:
     1.Mainfeed [DONE]
     2.UploadImage [DONE]
     3.Profile [IN PROGRESS]
+-Decrement number of posts when a post is deleted
