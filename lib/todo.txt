@@ -19,6 +19,7 @@ IT GETS DELETED WHEN THE PAGE IS REFRESHED AND FOR NOW THATS THE BEST I CAN DO]
 -UserDetails should have a listener on it in profilepage so it can be updated whenever values are changed
 -Improve the way dp loads
 -Popup image when you slect an image from the profile
+-dbremove for profilepage
 
 
 BIG UPGRADES:

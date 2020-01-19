@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:hello_flutter/postpop.dart';
 import 'package:hello_flutter/userinformation.dart';
 import 'package:hello_flutter/wallpaper.dart';
 
@@ -53,14 +54,38 @@ class ProfilePageState extends State<ProfilePage> {
             childAspectRatio: (itemHeight / itemWidth),
             crossAxisCount: 2,
             children: profileWallpaperList.map((element) {
-              return Card(
-                  child: Padding(
+              return InkWell(
+                  onTap: () async {
+                    await Future.delayed(Duration(milliseconds: 200));
+                    // showDialog(
+                    //     context: context,
+                    //     builder: (BuildContext context) =>
+                    //         PostPop(element, details));
+                    showGeneralDialog(
+                        barrierColor: Colors.black.withOpacity(0.5),
+                        transitionBuilder: (context, a1, a2, widget) {
+                          return Transform.scale(
+                            scale: a1.value,
+                            child: Opacity(
+                              opacity: a1.value,
+                              child: PostPop(element, details),
+                            ),
+                          );
+                        },
+                        transitionDuration: Duration(milliseconds: 200),
+                        barrierDismissible: true,
+                        barrierLabel: '',
+                        context: context,
+                        pageBuilder: (context, animation1, animation2) {});
+                  },
+                  child: Card(
+                      child: Padding(
                     padding: EdgeInsets.all(5),
-                child: Image.network(
-                  element.imglink,
-                  fit: BoxFit.cover,
-                ),
-              ));
+                    child: Image.network(
+                      element.imglink,
+                      fit: BoxFit.cover,
+                    ),
+                  )));
             }).toList(),
           ),
         ),
