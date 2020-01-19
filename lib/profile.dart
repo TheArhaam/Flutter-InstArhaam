@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hello_flutter/postpop.dart';
@@ -61,14 +63,20 @@ class ProfilePageState extends State<ProfilePage> {
                     //     context: context,
                     //     builder: (BuildContext context) =>
                     //         PostPop(element, details));
+                    
+                    //Enables custom animations for displaying the popup
                     showGeneralDialog(
-                        barrierColor: Colors.black.withOpacity(0.5),
+                        // barrierColor: Colors.black.withOpacity(0.5),
                         transitionBuilder: (context, a1, a2, widget) {
                           return Transform.scale(
                             scale: a1.value,
-                            child: Opacity(
-                              opacity: a1.value,
-                              child: PostPop(element, details),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(
+                                  sigmaX: a1.value + 2, sigmaY: a1.value + 2),
+                              // opacity: a1.value,
+                              child: Opacity(
+                                  opacity: a1.value,
+                                  child: PostPop(element, details)),
                             ),
                           );
                         },

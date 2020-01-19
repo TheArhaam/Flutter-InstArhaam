@@ -35,22 +35,22 @@ class PostPopState extends State<PostPop> {
         (hsize - kToolbarHeight - kBottomNavigationBarHeight - 24) * 0.8;
     minheight =
         (hsize - kToolbarHeight - kBottomNavigationBarHeight - 24) * 0.4;
-    return AnimatedContainer(
-      
-        child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-            child: Dialog(
-              backgroundColor: Theme.of(context).primaryColor,
-              child: buildCard(),
-            )));
+    return 
+    // BackdropFilter(
+    //     filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+    //     child: 
+        Dialog(
+          backgroundColor: Theme.of(context).primaryColor,
+          child: buildCard(),
+        )
+        // )
+        ;
   }
 
   Widget buildCard() {
     var wallpaperdb = FirebaseDatabase.instance.reference().child('Wallpapers');
 
     double val = 0.0;
-    bool visibility = true;
-    bool loadingVisibility = true;
     bool deleteEnabled = false;
 
     //Checking if user is the owner of the image
