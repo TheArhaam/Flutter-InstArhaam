@@ -7,6 +7,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hello_flutter/userinformation.dart';
 import 'package:hello_flutter/wallpaper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 
 class UploadPage extends StatefulWidget {
   UserDetails details;
@@ -25,6 +26,7 @@ class UploadPageState extends State<UploadPage> {
   bool spinnervisibility = false;
   File selectedImageFile;
   var image;
+  double uploadVal = 0.0;
 
   UploadPageState(UserDetails details) {
     // image = Image.asset('assets/UploadPageDefault.jpg');
@@ -142,11 +144,21 @@ class UploadPageState extends State<UploadPage> {
                   Text(' Upload '),
                   Visibility(
                     visible: spinnervisibility,
-                    child: SpinKitFadingFour(
-                      size: 20,
-                      duration: Duration(seconds: 1),
-                      color: Colors.white,
-                    ),
+                    child:
+                        //   SpinKitFadingFour(
+                        //     size: 20,
+                        //     duration: Duration(seconds: 1),
+                        //     color: Colors.white,
+                        //   ),
+                        Container(
+                            height: 20,
+                            width: 20,
+                            child: LiquidCircularProgressIndicator(
+                              borderWidth: 1,
+                              borderColor: Colors.white,
+                              backgroundColor: Colors.white,
+                              value: uploadVal,
+                            )),
                   ),
                 ],
               ),
@@ -158,7 +170,6 @@ class UploadPageState extends State<UploadPage> {
   }
 
   Future uploadImage(Wallpaper wallpaper, File selectedImageFile) async {
-    
     //GETTING IMAGE HEIGHT & WIDTH
     var imageHeight;
     var imageWidth;
@@ -177,6 +188,14 @@ class UploadPageState extends State<UploadPage> {
         .child(details.userEmail.substring(0, details.userEmail.length - 4));
     StorageUploadTask uploadTask =
         str.child(wallpaper.txt.data).putFile(selectedImageFile);
+
+    uploadTask.events.listen((event) {
+      uploadVal = event.snapshot.bytesTransferred.toDouble() /
+          event.snapshot.totalByteCount.toDouble();
+      print('PROGRESS: ${uploadVal}');
+      setState(() {});
+    });
+
     String downloadURL =
         await (await uploadTask.onComplete).ref.getDownloadURL();
 
@@ -188,7 +207,7 @@ class UploadPageState extends State<UploadPage> {
         .child('Images')
         .child(fwallpaper.txt)
         .set(fwallpaper.getJSON());
-    
+
     //INCREMENTING POSTS
     var posts;
     await wallpaperdb

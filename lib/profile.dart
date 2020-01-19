@@ -53,7 +53,7 @@ class ProfilePageState extends State<ProfilePage> {
     final double wsize = MediaQuery.of(context).size.width;
     double pageSize =
         (hsize - kToolbarHeight - kBottomNavigationBarHeight - 24);
-    double cardHeight = (pageSize * 0.3) + 45 + 10;
+    double cardHeight = (pageSize * 0.3) + 45;
     double itemHeight = pageSize / 2.5;
     double itemWidth = (wsize - 10) / 2;
     return Column(
@@ -63,6 +63,7 @@ class ProfilePageState extends State<ProfilePage> {
           height: pageSize - cardHeight,
           child: GridView.count(
             // shrinkWrap: true,
+            padding: EdgeInsets.only(right: 5,left: 5),
             childAspectRatio: (itemHeight / itemWidth),
             crossAxisCount: 2,
             children: profileWallpaperList.map((element) {
@@ -109,32 +110,32 @@ class ProfilePageState extends State<ProfilePage> {
                     child: Image.network(
                       element.imglink,
                       fit: BoxFit.cover,
-                loadingBuilder: (context, child, event) {
-                  if (event == null) {
-                    return child;
-                  }
-                  var val =
-                      event.cumulativeBytesLoaded / event.expectedTotalBytes;
-                  if (val == 1) {
-                    return child;
-                  } else if (val < 1) {
-                    //Using Center to make sure the ProgressIndicator is
-                    //in the center of the stack
-                    return Center(
-                        //Using SizedBox to maintain the size of the ProgressIndicator
-                        child: SizedBox(
-                      height: itemHeight*0.25,
-                      width: itemHeight*0.25,
-                      child: LiquidCircularProgressIndicator(
-                        borderColor: Colors.white,
-                        borderWidth: 2,
-                        direction: Axis.vertical,
-                        value: val,
-                        backgroundColor: Colors.white,
-                      ),
-                    ));
-                  }
-                },
+                      loadingBuilder: (context, child, event) {
+                        if (event == null) {
+                          return child;
+                        }
+                        var val = event.cumulativeBytesLoaded /
+                            event.expectedTotalBytes;
+                        if (val == 1) {
+                          return child;
+                        } else if (val < 1) {
+                          //Using Center to make sure the ProgressIndicator is
+                          //in the center of the stack
+                          return Center(
+                              //Using SizedBox to maintain the size of the ProgressIndicator
+                              child: SizedBox(
+                            height: itemHeight * 0.25,
+                            width: itemHeight * 0.25,
+                            child: LiquidCircularProgressIndicator(
+                              borderColor: Colors.white,
+                              borderWidth: 2,
+                              direction: Axis.vertical,
+                              value: val,
+                              backgroundColor: Colors.white,
+                            ),
+                          ));
+                        }
+                      },
                     ),
                   )));
             }).toList(),
@@ -203,7 +204,7 @@ class ProfileDetailsCardState extends State<ProfileDetailsCard> {
           //CARD INFO
           Container(
             height: pageHeight * 0.3,
-            margin: EdgeInsets.fromLTRB(10, 45, 10, 10),
+            margin: EdgeInsets.fromLTRB(8, 45, 8, 0),
             decoration: new BoxDecoration(
               color: new Color(0xFF212121),
               shape: BoxShape.rectangle,
@@ -319,37 +320,41 @@ class ProfileDetailsCardState extends State<ProfileDetailsCard> {
             alignment: FractionalOffset.topCenter,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                details.photoUrl,
-                height: pageHeight * 0.1,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, event) {
-                  if (event == null) {
-                    return child;
-                  }
-                  var val =
-                      event.cumulativeBytesLoaded / event.expectedTotalBytes;
-                  if (val == 1) {
-                    return child;
-                  } else if (val < 1) {
-                    //Using Center to make sure the ProgressIndicator is
-                    //in the center of the stack
-                    return Center(
-                        //Using SizedBox to maintain the size of the ProgressIndicator
-                        child: SizedBox(
-                      height: pageHeight * 0.1,
-                      width: pageHeight * 0.1,
-                      child: LiquidCircularProgressIndicator(
-                        borderColor: Colors.white,
-                        borderWidth: 2,
-                        direction: Axis.vertical,
-                        value: val,
-                        backgroundColor: Colors.white,
-                      ),
-                    ));
-                  }
-                },
-              ),
+              child: Container(
+                  height: pageHeight * 0.1,
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                  child: Image.network(
+                    details.photoUrl,
+                    height: pageHeight * 0.1,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, event) {
+                      if (event == null) {
+                        return child;
+                      }
+                      var val = event.cumulativeBytesLoaded /
+                          event.expectedTotalBytes;
+                      if (val == 1) {
+                        return child;
+                      } else if (val < 1) {
+                        //Using Center to make sure the ProgressIndicator is
+                        //in the center of the stack
+                        return Center(
+                            //Using SizedBox to maintain the size of the ProgressIndicator
+                            child: SizedBox(
+                          height: pageHeight * 0.05,
+                          width: pageHeight * 0.05,
+                          child: LiquidCircularProgressIndicator(
+                            borderColor: Colors.white,
+                            borderWidth: 2,
+                            direction: Axis.vertical,
+                            value: val,
+                            backgroundColor: Colors.white,
+                          ),
+                        ));
+                      }
+                    },
+                  )),
             ),
           ),
         ],

@@ -1,5 +1,4 @@
 -Implement Followers and Following
-
 -Fix the rerendering of images in the list
 -Modify database to generate uniqueID based on date and use it as the main key for the image
 -Make sure newest Images show up on top (in Database)
@@ -16,18 +15,15 @@ IT GETS DELETED WHEN THE PAGE IS REFRESHED AND FOR NOW THATS THE BEST I CAN DO]
 -Implement a circular bottomnavigationbar
 -Implement some sort of GlobalVariables instead of passing user details between classes
 -UserDetails should be stored from google only once, then user should have the ability to change it [HALF COMPLETE | EDIT NEEDS TO BE ADDED]
--**UserDetails should have a listener on it in profilepage so it can be updated whenever values are changed 
-    -[POPUP CAUSING PROBLEMS, LISTENER NOT ACTIVE]
-    -Update details whenever profilepage is called
-    -NOT WORKING BECAUSE USERDETAILS CARD IS IN ANOTHER CLASS FIGURE OUT A WAY AROUND IT    
-        -MAYBE MAKE IT INTO A FUNCTION INSTEAD OF ANOTHER StatefulWidget
--Improve the way dp loads
--add loading animation to images in profilepage
+-Improve the way dp loads [CANT FIGURE OUT HOW TO DO THIS]
 -Replace upload spinner with a CircularProgressIndicator
 -Add a CircularProgressIndicator for the delete button
+-Disable the overscroll glow
+-Implement drag to refresh
+
 
 IMP:
-    -onChilChanged: This only returns the newly changed data, not the entire Key:Value pair
+    -onChildChanged: This only returns the newly changed data, not the entire Key:Value pair
         -Best way to solve this problem is to call once().then() on the database and get the entire Key:Value pair
         -Fix dbremove using this
 
@@ -67,3 +63,10 @@ COMPLETE:
 -Popup image when you slect an image from the profile
 -dbremove for profilepage [IMPLEMENTED]
     -implement VoidCallback if dbremove isn't working since we're on the popup while deleting [IMPLEMENTED FUNCTION(x)]
+-add loading animation to images in profilepage
+-UserDetails should have a listener on it in profilepage so it can be updated whenever values are changed 
+    -[POPUP CAUSING PROBLEMS, LISTENER NOT ACTIVE] [THIS IS FALSE]
+    -Update details whenever profilepage is called
+    -NOT WORKING BECAUSE USERDETAILS CARD IS IN ANOTHER CLASS FIGURE OUT A WAY AROUND IT    
+        -MAYBE MAKE IT INTO A FUNCTION INSTEAD OF ANOTHER StatefulWidget
+    [SOLVED BECAUSE onChildChanged only returns the changed value nothing else]
