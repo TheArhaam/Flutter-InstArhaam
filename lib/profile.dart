@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hello_flutter/postpop.dart';
 import 'package:hello_flutter/userinformation.dart';
 import 'package:hello_flutter/wallpaper.dart';
+import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 
 class ProfilePage extends StatefulWidget {
   UserDetails details;
@@ -108,6 +109,32 @@ class ProfilePageState extends State<ProfilePage> {
                     child: Image.network(
                       element.imglink,
                       fit: BoxFit.cover,
+                loadingBuilder: (context, child, event) {
+                  if (event == null) {
+                    return child;
+                  }
+                  var val =
+                      event.cumulativeBytesLoaded / event.expectedTotalBytes;
+                  if (val == 1) {
+                    return child;
+                  } else if (val < 1) {
+                    //Using Center to make sure the ProgressIndicator is
+                    //in the center of the stack
+                    return Center(
+                        //Using SizedBox to maintain the size of the ProgressIndicator
+                        child: SizedBox(
+                      height: itemHeight*0.25,
+                      width: itemHeight*0.25,
+                      child: LiquidCircularProgressIndicator(
+                        borderColor: Colors.white,
+                        borderWidth: 2,
+                        direction: Axis.vertical,
+                        value: val,
+                        backgroundColor: Colors.white,
+                      ),
+                    ));
+                  }
+                },
                     ),
                   )));
             }).toList(),
@@ -140,20 +167,15 @@ class ProfileDetailsCardState extends State<ProfileDetailsCard> {
     userdb.onChildChanged.listen(userdbchanged);
 
     userdb.once().then((snapshot) {
-      print('REACHED HERE');
-      print('${snapshot.value}');
       this.details = UserDetails.fromJSON(snapshot.value);
     });
   }
 
   userdbchanged(Event event) {
-    print('CALLED');
     //THIS ONLY GETS THE CHANGED DATA, NOT IDEAL FOR OUR NEEDS
-    print('${event.snapshot.value}');
+    // print('${event.snapshot.value}');
     // this.details = UserDetails.fromJSON(event.snapshot.value);
     userdb.once().then((snapshot) {
-      print('REACHED HERE');
-      print('${snapshot.value}');
       this.details = UserDetails.fromJSON(snapshot.value);
     });
     setState(() {});
@@ -175,10 +197,6 @@ class ProfileDetailsCardState extends State<ProfileDetailsCard> {
     final double pageHeight =
         hsize - kToolbarHeight - kBottomNavigationBarHeight - 24;
 
-    // userdb.once().then((snapshot) {
-    //   print('REACHED HERE');
-    //   details = UserDetails.fromJSON(snapshot.details);
-    // });
     return Container(
       child: Stack(
         children: <Widget>[
@@ -305,6 +323,32 @@ class ProfileDetailsCardState extends State<ProfileDetailsCard> {
                 details.photoUrl,
                 height: pageHeight * 0.1,
                 fit: BoxFit.cover,
+                loadingBuilder: (context, child, event) {
+                  if (event == null) {
+                    return child;
+                  }
+                  var val =
+                      event.cumulativeBytesLoaded / event.expectedTotalBytes;
+                  if (val == 1) {
+                    return child;
+                  } else if (val < 1) {
+                    //Using Center to make sure the ProgressIndicator is
+                    //in the center of the stack
+                    return Center(
+                        //Using SizedBox to maintain the size of the ProgressIndicator
+                        child: SizedBox(
+                      height: pageHeight * 0.1,
+                      width: pageHeight * 0.1,
+                      child: LiquidCircularProgressIndicator(
+                        borderColor: Colors.white,
+                        borderWidth: 2,
+                        direction: Axis.vertical,
+                        value: val,
+                        backgroundColor: Colors.white,
+                      ),
+                    ));
+                  }
+                },
               ),
             ),
           ),
