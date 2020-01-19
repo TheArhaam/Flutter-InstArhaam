@@ -27,6 +27,7 @@ class ProfilePageState extends State<ProfilePage> {
         .child(details.userEmail.substring(0, details.userEmail.length - 4))
         .child('Images');
     profilewallpaperdb.onChildAdded.listen(dbadd);
+    profilewallpaperdb.onChildRemoved.listen(dbremove);
   }
 
   dbadd(Event event) {
@@ -34,6 +35,14 @@ class ProfilePageState extends State<ProfilePage> {
         details.photoUrl, details.userEmail, details.userName);
     var wallp = new Wallpaper.fromJSON(event.snapshot.value, user);
     profileWallpaperList.add(wallp);
+    setState(() {});
+  }
+
+  dbremove(Event event) {
+    UserDisplayDetails user = UserDisplayDetails(
+        details.photoUrl, details.userEmail, details.userName);
+    var wallp = new Wallpaper.fromJSON(event.snapshot.value, user);
+    profileWallpaperList.remove(wallp);
     setState(() {});
   }
 
@@ -63,7 +72,7 @@ class ProfilePageState extends State<ProfilePage> {
                     //     context: context,
                     //     builder: (BuildContext context) =>
                     //         PostPop(element, details));
-                    
+
                     //Enables custom animations for displaying the popup
                     showGeneralDialog(
                         // barrierColor: Colors.black.withOpacity(0.5),
@@ -76,7 +85,16 @@ class ProfilePageState extends State<ProfilePage> {
                               // opacity: a1.value,
                               child: Opacity(
                                   opacity: a1.value,
-                                  child: PostPop(element, details)),
+                                  child: PostPop(
+                                    element,
+                                    details,
+                                    setStateCallback1: (element) {
+                                      setState(() {
+                                        profileWallpaperList.remove(element);
+                                        print('REMOVED');
+                                      });
+                                    },
+                                  )),
                             ),
                           );
                         },

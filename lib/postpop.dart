@@ -10,14 +10,16 @@ import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 class PostPop extends StatefulWidget {
   Wallpaper element;
   UserDetails details;
-  PostPop(this.element, this.details);
+  Function(Wallpaper) setStateCallback1;
+  PostPop(this.element, this.details,{this.setStateCallback1});
   @override
   State<StatefulWidget> createState() {
-    return PostPopState(element, details);
+    return PostPopState(element, details,setStateCallback2:(element){setStateCallback1(element);});
   }
 }
 
 class PostPopState extends State<PostPop> {
+  Function(Wallpaper) setStateCallback2;
   UserDetails details;
   Wallpaper element;
   double hsize;
@@ -26,7 +28,7 @@ class PostPopState extends State<PostPop> {
   double minheight;
   Icon favicon = Icon(Icons.favorite);
   Icon favbicon = Icon(Icons.favorite_border);
-  PostPopState(this.element, this.details);
+  PostPopState(this.element, this.details,{this.setStateCallback2});
   @override
   Widget build(BuildContext context) {
     hsize = MediaQuery.of(context).size.height;
@@ -224,7 +226,8 @@ class PostPopState extends State<PostPop> {
                                   .child('UserDetails')
                                   .child('posts')
                                   .set(posts.toString());
-
+                              setStateCallback2(element);
+                              Navigator.pop(context);
                               setState(() {});
                             }
                           },

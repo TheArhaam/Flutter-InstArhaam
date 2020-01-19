@@ -18,8 +18,11 @@ IT GETS DELETED WHEN THE PAGE IS REFRESHED AND FOR NOW THATS THE BEST I CAN DO]
 -UserDetails should be stored from google only once, then user should have the ability to change it [HALF COMPLETE | EDIT NEEDS TO BE ADDED]
 -UserDetails should have a listener on it in profilepage so it can be updated whenever values are changed
 -Improve the way dp loads
--Popup image when you slect an image from the profile
 -dbremove for profilepage
+    -implement VoidCallback if dbremove isn't working since we're on the popup while deleting
+-add loading animation to images in profilepage
+-Replace upload spinner with a CircularProgressIndicator
+-Add a CircularProgressIndicator for the delete button
 
 
 BIG UPGRADES:
@@ -54,3 +57,4 @@ COMPLETE:
     2.UploadImage [DONE]
     3.Profile [IN PROGRESS]
 -Decrement number of posts when a post is deleted
+-Popup image when you slect an image from the profile
