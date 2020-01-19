@@ -89,10 +89,8 @@ class ProfilePageState extends State<ProfilePage> {
                                     element,
                                     details,
                                     setStateCallback1: (element) {
-                                      setState(() {
-                                        profileWallpaperList.remove(element);
-                                        print('REMOVED');
-                                      });
+                                      profileWallpaperList.remove(element);
+                                      setState(() {});
                                     },
                                   )),
                             ),
@@ -131,7 +129,36 @@ class ProfileDetailsCard extends StatefulWidget {
 
 class ProfileDetailsCardState extends State<ProfileDetailsCard> {
   UserDetails details;
-  ProfileDetailsCardState(this.details);
+  var userdb;
+  ProfileDetailsCardState(UserDetails details) {
+    this.details = details;
+    userdb = FirebaseDatabase.instance
+        .reference()
+        .child('Wallpapers')
+        .child(details.userEmail.substring(0, details.userEmail.length - 4))
+        .child('UserDetails');
+    userdb.onChildChanged.listen(userdbchanged);
+
+    userdb.once().then((snapshot) {
+      print('REACHED HERE');
+      print('${snapshot.value}');
+      this.details = UserDetails.fromJSON(snapshot.value);
+    });
+  }
+
+  userdbchanged(Event event) {
+    print('CALLED');
+    //THIS ONLY GETS THE CHANGED DATA, NOT IDEAL FOR OUR NEEDS
+    print('${event.snapshot.value}');
+    // this.details = UserDetails.fromJSON(event.snapshot.value);
+    userdb.once().then((snapshot) {
+      print('REACHED HERE');
+      print('${snapshot.value}');
+      this.details = UserDetails.fromJSON(snapshot.value);
+    });
+    setState(() {});
+  }
+
   TextStyle textStyle = TextStyle(
     color: Colors.white,
     fontSize: 30,
@@ -140,12 +167,18 @@ class ProfileDetailsCardState extends State<ProfileDetailsCard> {
     color: Colors.white,
     fontSize: 15,
   );
+
   @override
   Widget build(BuildContext context) {
     final double hsize = MediaQuery.of(context).size.height;
     final double wsize = MediaQuery.of(context).size.width;
     final double pageHeight =
         hsize - kToolbarHeight - kBottomNavigationBarHeight - 24;
+
+    // userdb.once().then((snapshot) {
+    //   print('REACHED HERE');
+    //   details = UserDetails.fromJSON(snapshot.details);
+    // });
     return Container(
       child: Stack(
         children: <Widget>[
