@@ -60,6 +60,13 @@ class HomePageState extends State<HomePage> {
         GoogleSignIn(); //this will be used to sign out
 
     return MaterialApp(
+      builder: (context, child) {
+        //REMOVING OVERSCROLLGLOW
+        return ScrollConfiguration(
+          behavior: MyBehavior(),
+          child: child,
+        );
+      },
       //Theme for the entire HomePage
       theme: ThemeData(
         appBarTheme: AppBarTheme(color: Color(0xFF1b1b1b)),
@@ -182,5 +189,16 @@ class HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+}
+
+
+
+//REMOVING OVERSCROLLGLOW
+class MyBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
   }
 }
