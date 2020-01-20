@@ -11,10 +11,12 @@ class PostPop extends StatefulWidget {
   Wallpaper element;
   UserDetails details;
   Function(Wallpaper) setStateCallback1;
-  PostPop(this.element, this.details,{this.setStateCallback1});
+  PostPop(this.element, this.details, {this.setStateCallback1});
   @override
   State<StatefulWidget> createState() {
-    return PostPopState(element, details,setStateCallback2:(element){setStateCallback1(element);});
+    return PostPopState(element, details, setStateCallback2: (element) {
+      setStateCallback1(element);
+    });
   }
 }
 
@@ -28,7 +30,8 @@ class PostPopState extends State<PostPop> {
   double minheight;
   Icon favicon = Icon(Icons.favorite);
   Icon favbicon = Icon(Icons.favorite_border);
-  PostPopState(this.element, this.details,{this.setStateCallback2});
+  bool spinnerVisible = false;
+  PostPopState(this.element, this.details, {this.setStateCallback2});
   @override
   Widget build(BuildContext context) {
     hsize = MediaQuery.of(context).size.height;
@@ -37,21 +40,20 @@ class PostPopState extends State<PostPop> {
         (hsize - kToolbarHeight - kBottomNavigationBarHeight - 24) * 0.8;
     minheight =
         (hsize - kToolbarHeight - kBottomNavigationBarHeight - 24) * 0.4;
-    return 
-    // BackdropFilter(
-    //     filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-    //     child: 
+    return
+        // BackdropFilter(
+        //     filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        //     child:
         Dialog(
-          backgroundColor: Theme.of(context).primaryColor,
-          child: buildCard(),
-        )
+      backgroundColor: Theme.of(context).primaryColor,
+      child: buildCard(),
+    )
         // )
         ;
   }
 
   Widget buildCard() {
     var wallpaperdb = FirebaseDatabase.instance.reference().child('Wallpapers');
-
     double val = 0.0;
     bool deleteEnabled = false;
 
@@ -195,6 +197,8 @@ class PostPopState extends State<PostPop> {
                           enabled: deleteEnabled,
                           onSelected: (var choice) async {
                             if (choice == 'Delete') {
+                              spinnerVisible = true;
+                              setState(() {});
                               await FirebaseStorage.instance
                                   .ref()
                                   .child('Wallpapers')
@@ -231,7 +235,12 @@ class PostPopState extends State<PostPop> {
                               setState(() {});
                             }
                           },
-                          icon: Icon(Icons.menu),
+                          icon: Visibility(
+                              visible: spinnerVisible,
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                              replacement: Icon(Icons.menu)),
                           itemBuilder: (BuildContext context) {
                             return <PopupMenuItem>[
                               PopupMenuItem(

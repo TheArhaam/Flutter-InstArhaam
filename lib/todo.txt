@@ -16,10 +16,10 @@ IT GETS DELETED WHEN THE PAGE IS REFRESHED AND FOR NOW THATS THE BEST I CAN DO]
 -Implement some sort of GlobalVariables instead of passing user details between classes
 -UserDetails should be stored from google only once, then user should have the ability to change it [HALF COMPLETE | EDIT NEEDS TO BE ADDED]
 -Improve the way dp loads [CANT FIGURE OUT HOW TO DO THIS]
--Replace upload spinner with a CircularProgressIndicator
--Add a CircularProgressIndicator for the delete button
--Disable the overscroll glow
 -Implement drag to refresh
+    -https://pub.dev/packages/pull_to_refresh
+    -Use the above widget
+    -Remove dbadd from mainfeed, pull_to_refresh will add elements to the wallpaperlist
 
 
 IMP:
@@ -70,3 +70,6 @@ COMPLETE:
     -NOT WORKING BECAUSE USERDETAILS CARD IS IN ANOTHER CLASS FIGURE OUT A WAY AROUND IT    
         -MAYBE MAKE IT INTO A FUNCTION INSTEAD OF ANOTHER StatefulWidget
     [SOLVED BECAUSE onChildChanged only returns the changed value nothing else]
+-Disable the overscroll glow
+-Replace upload spinner with a CircularProgressIndicator
+-Add a CircularProgressIndicator for the delete button
