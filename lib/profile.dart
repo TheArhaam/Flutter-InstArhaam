@@ -63,7 +63,7 @@ class ProfilePageState extends State<ProfilePage> {
           height: pageSize - cardHeight,
           child: GridView.count(
             // shrinkWrap: true,
-            padding: EdgeInsets.only(right: 5,left: 5),
+            padding: EdgeInsets.only(right: 5, left: 5),
             childAspectRatio: (itemHeight / itemWidth),
             crossAxisCount: 2,
             children: profileWallpaperList.map((element) {
@@ -176,6 +176,7 @@ class ProfileDetailsCardState extends State<ProfileDetailsCard> {
     //THIS ONLY GETS THE CHANGED DATA, NOT IDEAL FOR OUR NEEDS
     // print('${event.snapshot.value}');
     // this.details = UserDetails.fromJSON(event.snapshot.value);
+    print('REACHED');
     userdb.once().then((snapshot) {
       this.details = UserDetails.fromJSON(snapshot.value);
     });
@@ -230,7 +231,67 @@ class ProfileDetailsCardState extends State<ProfileDetailsCard> {
                       Text(
                         details.userName,
                         style: textStyle,
-                      )
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                String newName;
+                                return AlertDialog(
+                                  backgroundColor: Theme.of(context).canvasColor,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      side: BorderSide(
+                                        width: 5,
+                                          color:
+                                              Theme.of(context).primaryColor)),
+                                  title: Text('Edit',style: textStyle,),
+                                  content: Container(
+                                      alignment: Alignment.center,
+                                      height: hsize * 0.25,
+                                      width: wsize * 0.5,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Text(
+                                              'Current name: ${details.userName}',style: textStyle2,),
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              Text('Enter new name: ',style: textStyle2,),
+                                              Container(
+                                                width: wsize * 0.25,
+                                                child: TextField(
+                                                  style: textStyle2,
+                                                  maxLengthEnforced: true,
+                                                  maxLines: 1,
+                                                  maxLength: 20,
+                                                  onChanged: (string) {
+                                                    newName = string;
+                                                  },
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          RaisedButton(
+                                            child: Text('UPDATE NAME'),
+                                            onPressed: () async {
+                                              if (newName.isNotEmpty) {
+                                                await userdb
+                                                    .child('userName')
+                                                    .set(newName);
+                                                Navigator.pop(context);
+                                              }
+                                            },
+                                          )
+                                        ],
+                                      )),
+                                );
+                              });
+                        },
+                      ),
                     ],
                   ),
 

@@ -9,7 +9,6 @@
     -Add more signup options to make the login page less bland 
 -Try to implement Hero() widget for InstArhaam logo on login page to Mainfeed [TRIED|NOT WORKING AS EXPECTED|FURTHER RESEARCH REQUIRED]
 -Try to use "Issues" in github instead of creating a temporary ToDo list
--Only owner should have the ability to delete photos
 -Images don't immediately get deleted from other users devices [THIS IS BECAUSE IT WOULD BE IMPOSSIBLE TO KEEP TRACK OF EVERY SINGLE IMAGE, 
 IT GETS DELETED WHEN THE PAGE IS REFRESHED AND FOR NOW THATS THE BEST I CAN DO]
 -Implement a circular bottomnavigationbar
@@ -20,7 +19,7 @@ IT GETS DELETED WHEN THE PAGE IS REFRESHED AND FOR NOW THATS THE BEST I CAN DO]
     -https://pub.dev/packages/pull_to_refresh
     -Use the above widget
     -Remove dbadd from mainfeed, pull_to_refresh will add elements to the wallpaperlist
-
+-Add a CircularProgressIndicator for the delete button [WORKED ON POSTPOP | MAINFEED HAS MULTIPLE CARDS SO SPINNER COMES ON EVERY CARD]
 
 IMP:
     -onChildChanged: This only returns the newly changed data, not the entire Key:Value pair
@@ -72,4 +71,4 @@ COMPLETE:
     [SOLVED BECAUSE onChildChanged only returns the changed value nothing else]
 -Disable the overscroll glow
 -Replace upload spinner with a CircularProgressIndicator
--Add a CircularProgressIndicator for the delete button
+-Only owner should have the ability to delete photos

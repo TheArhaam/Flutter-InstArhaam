@@ -85,8 +85,9 @@ class MainFeedState extends State<MainFeed> {
           children: wallpaperlist.map(
             (element) {
               double val = 0.0;
-              bool visibility = true;
-              bool loadingVisibility = true;
+              // bool visibility = true;
+              // bool loadingVisibility = true;
+              bool deleteSpinnerVisibility = false;
               bool deleteEnabled = false;
 
               //Checking if user is the owner of the image
@@ -251,6 +252,8 @@ class MainFeedState extends State<MainFeed> {
                               child: PopupMenuButton(
                                 enabled: deleteEnabled,
                                 onSelected: (var choice) async {
+                                  deleteSpinnerVisibility = true;
+                                  setState(() {});
                                   if (choice == 'Delete') {
                                     await FirebaseStorage.instance
                                         .ref()
@@ -289,7 +292,13 @@ class MainFeedState extends State<MainFeed> {
                                     setState(() {});
                                   }
                                 },
-                                icon: Icon(Icons.menu),
+                                icon: Visibility(
+                                    visible: deleteSpinnerVisibility,
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.white),
+                                    ),
+                                    replacement: Icon(Icons.menu)),
                                 itemBuilder: (BuildContext context) {
                                   return <PopupMenuItem>[
                                     PopupMenuItem(

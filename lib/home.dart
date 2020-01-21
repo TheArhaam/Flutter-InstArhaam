@@ -192,8 +192,6 @@ class HomePageState extends State<HomePage> {
   }
 }
 
-
-
 //REMOVING OVERSCROLLGLOW
 class MyBehavior extends ScrollBehavior {
   @override
