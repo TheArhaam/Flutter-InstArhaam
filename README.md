@@ -9,8 +9,6 @@
 </p>
 <hr>
 <p align="center">
-  <b>OUTDATED</b> 
-  <br>(Will be uploading newer version soon)
   <br><img src="screenshots/demo.gif" width="300">
 </p>
 <hr>
@@ -24,7 +22,6 @@
   <!--ROW 2-->
   <tr>
     <td><img src="screenshots/flutter_04.png" width="300"></td>
-    <td><img src="screenshots/flutter_06.png" width="300"></td>
-    <td><img src="screenshots/flutter_07.png" width="300"></td>
+    <td><img src="screenshots/flutter_05.png" width="300"></td>
   </tr>
 </table>
